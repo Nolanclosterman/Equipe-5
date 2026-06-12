@@ -142,13 +142,40 @@ function funFact(record: WasteRecord): string {
 
 export type Difficulty = 'debutant' | 'expert';
 
-// Poubelles « maison » → déchets courants (débutant). Recyparc / point spécial → experts.
+// Poubelles « maison ».
 const HOME_BINS: BinKey[] = ['pmc', 'papier', 'organique', 'residuel'];
 
-/** Niveau d'un déchet : courant = débutant ; spécial (recyparc/point spécial) = expert. */
+// Catégories où le matériau indique DIRECTEMENT la poubelle pour un enfant
+// (bouteille plastique → PMC, journal → papiers, épluchure → organique…).
+const OBVIOUS_CATEGORIES = new Set([
+  'Bouteilles et flacons en plastique',
+  'Emballages plastique',
+  'Emballages métalliques',
+  'bouteilles et flacons en métal',
+  'Papiers',
+  'Déchets verts',
+  'Déchets organiques',
+]);
+
+// Déchets piégeux même dans une catégorie « évidente » : un objet en papier/textile
+// qui va aux organiques (mouchoir, sachet de thé…) surprend un enfant.
+const TRICKY_KEYWORDS = ['mouchoir', 'sachet', 'essuie', 'serviette', 'cuisson', 'absorbant'];
+
+/** Un déchet est « évident » si sa catégorie ET son nom ne piègent pas l'enfant. */
+function isObvious(record: WasteRecord): boolean {
+  if (!OBVIOUS_CATEGORIES.has(record.categorie)) return false;
+  const name = record.dechet.toLowerCase();
+  return !TRICKY_KEYWORDS.some((k) => name.includes(k));
+}
+
+/**
+ * Niveau d'un déchet :
+ * - Débutant : poubelle maison ET déchet évident (accessible à un enfant de 12 ans).
+ * - Expert : recyparc / point spécial, OU cas piégeux (Pringles, verre à boire, mouchoir…).
+ */
 export function difficultyOf(record: WasteRecord): Difficulty {
   const primary = getBins(record)[0];
-  return HOME_BINS.includes(primary) ? 'debutant' : 'expert';
+  return HOME_BINS.includes(primary) && isObvious(record) ? 'debutant' : 'expert';
 }
 
 /** Interprète le choix de niveau d'un enfant (bouton ou texte libre). Défaut : débutant. */
