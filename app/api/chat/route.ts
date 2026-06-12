@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import { sanitizeInput } from '@/lib/sanitize';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { searchWaste } from '@/lib/search';
-import { streamChatCompletion } from '@/lib/claude';
+import { streamChatCompletion, chatCompletion } from '@/lib/claude';
+import { classifyChatIntent } from '@/lib/intent';
+import { newQuestion, questionText } from '@/lib/game';
 import { logUnknownTerm, logQuestionPattern } from '@/lib/db';
 import type { Message } from '@/lib/claude';
 
@@ -79,6 +81,25 @@ export async function POST(request: Request) {
         })
         .filter((m): m is Message => m !== null)
     : [];
+
+  // L'enfant veut-il jouer ? Si oui, on signale au client de lancer une partie.
+  try {
+    const intent = await classifyChatIntent(sanitized);
+    if (intent === 'start_game') {
+      const question = newQuestion('random');
+      return NextResponse.json({
+        startGame: true,
+        mode: 'game',
+        question,
+        reply: `🎮 C'est parti pour un défi tri ! Réponds quand tu es prêt, et dis "stop" quand tu veux arrêter.\n\n${questionText(
+          question
+        )}`,
+      });
+    }
+  } catch (error) {
+    console.error('[chat] intent classification failed:', error);
+    // En cas d'échec, on continue comme une question normale.
+  }
 
   const wasteResults = searchWaste(sanitized);
 
