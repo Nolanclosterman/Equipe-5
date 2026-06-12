@@ -31,11 +31,12 @@ interface Props {
 
 export default function PushToTalkButton({ onTranscript, disabled }: Props) {
   const [isListening, setIsListening] = useState(false);
-  const [isSupported, setIsSupported] = useState(false);
+  const [isSupported, setIsSupported] = useState(true);
   const recognitionRef = useRef<SpeechRecognitionCompat | null>(null);
 
   useEffect(() => {
-    setIsSupported('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+    const w = window as unknown as Record<string, unknown>;
+    setIsSupported(typeof w.SpeechRecognition === 'function' || typeof w.webkitSpeechRecognition === 'function');
   }, []);
 
   const startListening = useCallback(() => {
