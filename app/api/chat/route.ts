@@ -31,10 +31,13 @@ export async function POST(request: Request) {
   const { valid, sanitized } = sanitizeInput(rawMessage);
 
   if (!valid || !sanitized) {
+    // Signal the client that this was a blocked injection attempt so it can
+    // power the "Vrai déchet ou Triche ?" easter egg (counter lives client-side).
     return NextResponse.json(
       {
         reply:
           "Hmm, ce message ne me semble pas correct. 🤔 Tu peux me poser une question sur le tri des déchets !",
+        injection: true,
       },
       { status: 200 }
     );
