@@ -74,7 +74,13 @@ export async function POST(request: Request) {
     }
 
     const difficulty = readDifficulty(body.difficulty);
-    const intent = await classifyGameIntent(sanitized);
+    const context =
+      question.format === 'truefalse'
+        ? `C'est un Vrai/Faux : la seule réponse valide est "vrai" ou "faux".`
+        : `C'est un jeu d'intrus : la seule réponse valide est un numéro (1 à ${question.items.length}) ou le nom d'un de ces objets : ${question.items
+            .map((i) => i.dechet)
+            .join(', ')}.`;
+    const intent = await classifyGameIntent(sanitized, context);
 
     // L'enfant ne sait pas → on explique gentiment et on enchaîne (pas de pénalité)
     if (intent === 'dont_know') {
@@ -105,14 +111,15 @@ export async function POST(request: Request) {
       });
     }
 
-    // L'enfant pose une vraie question au lieu de répondre
+    // L'enfant ne répond pas au défi mais veut trier un objet / poser une question
+    // → on revient en mode conversation et on répond normalement.
     if (intent === 'ask_question') {
       const wasteResults = searchWaste(sanitized);
       const answer = await chatCompletion(sanitized, wasteResults, []);
       return NextResponse.json({
-        mode: 'game',
-        question, // on garde la même question
-        reply: `${answer}\n\n---\nMaintenant, revenons à notre défi ! 👇\n\n${questionText(question)}`,
+        mode: 'chat',
+        question: null,
+        reply: `${answer}\n\n_(J'ai mis le jeu de côté 🎮 — dis "on joue" quand tu veux reprendre !)_`,
       });
     }
 
