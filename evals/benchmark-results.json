@@ -1,0 +1,540 @@
+{
+  "ranAt": "2026-06-12T13:58:37.561Z",
+  "temperature": 0.2,
+  "models": [
+    "claude-haiku-4-5",
+    "claude-sonnet-4-6"
+  ],
+  "results": [
+    {
+      "caseId": "Q1 bouteille plastique",
+      "model": "claude-haiku-4-5",
+      "text": "Super ! 🥤 Ta bouteille de Coca en plastique va dans le **sac bleu des PMC** (à la maison). Une fois triée, elle sera lavée, broyée et transformée en granulés pour fabriquer de nouveaux produits !\n\nPetit conseil : tu pourrais aussi essayer une gourde réutilisable, c'est encore mieux pour la planète ! 🌍",
+      "ttftMs": 722.970458,
+      "totalMs": 1666.664875,
+      "inputTokens": 1984,
+      "outputTokens": 105,
+      "cacheReadTokens": 0,
+      "tokPerSec": 111.26483118740333,
+      "costUsd": 0.002509,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse parfaitement alignée avec les faits attendus : sac bleu PMC, filière de recyclage (lavage, broyage, granulés), conseil prévention (gourde), ton adapté aux enfants avec tutoiement et émojis, aucune information inventée."
+      }
+    },
+    {
+      "caseId": "Q1 bouteille plastique",
+      "model": "claude-sonnet-4-6",
+      "text": "Ta bouteille de Coca 🥤 va dans le **sac bleu PMC** ! Pense à l'écraser un peu pour gagner de la place. Petit conseil : une gourde réutilisable, c'est encore mieux pour la planète 🌍♻️",
+      "ttftMs": 1511.0763340000003,
+      "totalMs": 3190.216042000001,
+      "inputTokens": 3,
+      "outputTokens": 76,
+      "cacheReadTokens": 0,
+      "tokPerSec": 45.2612725658918,
+      "costUsd": 0.001149,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "La consigne est correcte (sac bleu PMC) et le conseil prévention (gourde) est présent, mais la destination matière (pellets/granulés, refonte) n'est pas mentionnée, ce qui rend la complétude partielle."
+      }
+    },
+    {
+      "caseId": "Q2 canette métal",
+      "model": "claude-haiku-4-5",
+      "text": "Ta canette va dans le **sac bleu des PMC** ! 🥫 Une fois broyée et fondue, elle devient une toute nouvelle canette ou un autre produit en métal. Petit conseil : tu pourrais aussi utiliser une gourde réutilisable, c'est encore mieux pour la planète ! 💚",
+      "ttftMs": 670.485541,
+      "totalMs": 1719.8357909999995,
+      "inputTokens": 1847,
+      "outputTokens": 85,
+      "cacheReadTokens": 0,
+      "tokPerSec": 81.00250607459239,
+      "costUsd": 0.002272,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse parfaite : consigne correcte (sac bleu PMC), destination bien expliquée (broyée/fondue), conseil prévention (gourde), ton adapté aux enfants avec émojis et tutoiement, aucune invention."
+      }
+    },
+    {
+      "caseId": "Q2 canette métal",
+      "model": "claude-sonnet-4-6",
+      "text": "Ta canette vide, c'est direction le **sac bleu PMC** 🥤♻️ ! Assure-toi qu'elle est bien vidée avant de la jeter. Petit conseil : tu pourrais opter pour une gourde réutilisable, c'est encore mieux pour la planète 🌍😉",
+      "ttftMs": 2485.644250000001,
+      "totalMs": 4429.954209000003,
+      "inputTokens": 3,
+      "outputTokens": 87,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 44.74595194932081,
+      "costUsd": 0.004794,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "La consigne PMC est correcte et bien formulée pour un enfant, avec un bon conseil prévention (gourde), mais la destination du métal après collecte (recyclage/fonte) n'est pas mentionnée, ce qui rend la complétude partielle."
+      }
+    },
+    {
+      "caseId": "Q4 GSM DEEE",
+      "model": "claude-haiku-4-5",
+      "text": "Ton vieux téléphone, c'est un déchet électronique ! 📱♻️ Tu dois le porter au **recyparc dans la zone DEEE** (déchets d'équipements électriques et électroniques) — c'est super important parce qu'il contient des métaux précieux et du verre qui peuvent être réutilisés. Petit conseil : avant de le jeter, vérifie qu'il ne peut pas être réparé ou donné à quelqu'un d'autre ! 😊",
+      "ttftMs": 1101.43275,
+      "totalMs": 2336.5447910000003,
+      "inputTokens": 1982,
+      "outputTokens": 131,
+      "cacheReadTokens": 0,
+      "tokPerSec": 106.06325228109405,
+      "costUsd": 0.002637,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 1,
+        "verdict": "La réponse est correcte et bien adaptée aux enfants avec recyparc/DEEE et conseil de réparation, mais elle mentionne 'verre' comme matériau récupéré (non mentionné dans les faits attendus) et omet la redirection Recupel, d'où une complétude partielle et un ancrage légèrement imprécis."
+      }
+    },
+    {
+      "caseId": "Q4 GSM DEEE",
+      "model": "claude-sonnet-4-6",
+      "text": "Ton vieux téléphone, c'est un déchet électronique (DEEE), donc direction le **recyparc** 📱♻️ ! Dépose-le dans la zone DEEE, et ses métaux précieux et plastiques seront récupérés pour fabriquer de nouveaux objets. Petit conseil : avant de le jeter, vérifie s'il peut être réparé ou reconditionné, ça évite du gaspillage 🌍 !",
+      "ttftMs": 1328.3227499999994,
+      "totalMs": 3786.621041999999,
+      "inputTokens": 3,
+      "outputTokens": 121,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 49.22104058476888,
+      "costUsd": 0.005304,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse exacte et bien adaptée aux enfants avec recyparc + DEEE + prévention, mais la redirection Recupel n'est pas mentionnée, ce qui rend la complétude partielle."
+      }
+    },
+    {
+      "caseId": "Q5 piles",
+      "model": "claude-haiku-4-5",
+      "text": "Tes vieilles piles, c'est au **recyparc** qu'elles vont ! 🔋 Une fois là-bas, elles sont démontées et transformées en matières premières (fer, nickel…) pour fabriquer de nouveaux produits. Petit conseil : tu pourrais aussi utiliser des piles rechargeables, c'est plus économique et écolo ! ♻️",
+      "ttftMs": 715.0922920000012,
+      "totalMs": 1373.6504580000037,
+      "inputTokens": 1837,
+      "outputTokens": 104,
+      "cacheReadTokens": 0,
+      "tokPerSec": 157.92075076933995,
+      "costUsd": 0.002357,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "La réponse est exacte et bien adaptée aux enfants avec le recyparc mentionné et le conseil sur les piles rechargeables, mais elle omet les bulles à piles en magasin (Recupel) qui constituent une filière complémentaire importante."
+      }
+    },
+    {
+      "caseId": "Q5 piles",
+      "model": "claude-sonnet-4-6",
+      "text": "Tes vieilles piles, ça ne se jette **jamais** à la poubelle ! 🔋❌ Dépose-les au **recyparc** dans le bac prévu pour les piles, ou dans les petits collecteurs orange qu'on trouve souvent en supermarché. Elles seront démontées pour récupérer des métaux comme le fer et le nickel, qui serviront à fabriquer de nouveaux produits ! ♻️\n\nPetit conseil : tu pourrais passer aux **piles rechargeables**, c'est plus écolo et moins cher sur le long terme ! 😉",
+      "ttftMs": 1379.3137920000008,
+      "totalMs": 4622.5612919999985,
+      "inputTokens": 3,
+      "outputTokens": 157,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 48.40826979747926,
+      "costUsd": 0.005844,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse complète et parfaitement ancrée : recyparc, collecteurs en supermarché (bulles à piles), récupération des métaux (fer, nickel) et conseil sur les piles rechargeables, le tout dans un ton adapté aux enfants avec émojis et tutoiement."
+      }
+    },
+    {
+      "caseId": "Q6 fleur fanée (double filière)",
+      "model": "claude-haiku-4-5",
+      "text": "Super question ! 🌸 Les fleurs fanées, c'est un déchet organique : tu peux les mettre à la **collecte des déchets organiques** (le bac/sac marron) ou les apporter au **recyparc dans la zone déchets verts**. Elles deviennent du compost, c'est-à-dire un super engrais naturel pour les plantes ! 🌱",
+      "ttftMs": 1111.941792000005,
+      "totalMs": 2609.297792000005,
+      "inputTokens": 1805,
+      "outputTokens": 107,
+      "cacheReadTokens": 0,
+      "tokPerSec": 71.45929224579861,
+      "costUsd": 0.00234,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse parfaite : les deux filières (collecte organique + recyparc déchets verts) sont mentionnées, la destination compost est expliquée, le ton est adapté aux enfants avec émojis et tutoiement, et aucune information inventée."
+      }
+    },
+    {
+      "caseId": "Q6 fleur fanée (double filière)",
+      "model": "claude-sonnet-4-6",
+      "text": "Les fleurs fanées, c'est pour la **collecte des déchets organiques** 🌸🍂, ou tu peux les déposer au **recyparc dans les déchets verts** ! Dans les deux cas, elles deviennent du compost, un super engrais naturel pour les jardins 🌱.",
+      "ttftMs": 1362.8609999999971,
+      "totalMs": 3240.813292000006,
+      "inputTokens": 3,
+      "outputTokens": 85,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 45.26206568830109,
+      "costUsd": 0.004764,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse parfaite : les deux filières (collecte organique + recyparc déchets verts) sont mentionnées, la destination compost est expliquée simplement, le ton est adapté aux enfants avec émojis et tutoiement, et aucune information inventée."
+      }
+    },
+    {
+      "caseId": "Q7 ampoule LED",
+      "model": "claude-haiku-4-5",
+      "text": "Super question ! 💡 Ton ampoule LED grillée, c'est un déchet électronique : tu dois la déposer **au recyparc dans le bac DEEE** (déchets d'équipements électriques). Là-bas, le verre, le métal et les plastiques seront réutilisés pour fabriquer de nouveaux produits ! ♻️",
+      "ttftMs": 715.5430420000048,
+      "totalMs": 1708.3893340000068,
+      "inputTokens": 1767,
+      "outputTokens": 100,
+      "cacheReadTokens": 0,
+      "tokPerSec": 100.72052522708097,
+      "costUsd": 0.002267,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "La consigne principale (recyparc/DEEE) est correcte et bien expliquée avec le devenir des matériaux, mais la réponse omet le point important que les ampoules LED ne vont PAS dans les bulles à verre, ni la redirection possible vers Recupel."
+      }
+    },
+    {
+      "caseId": "Q7 ampoule LED",
+      "model": "claude-sonnet-4-6",
+      "text": "Ton ampoule LED grillée, c'est direction le **recyparc**, dans la zone DEEE (déchets électriques et électroniques) 💡♻️ — surtout pas à la poubelle normale ! Le verre, le métal et les plastiques seront ensuite recyclés pour fabriquer de nouveaux produits, cool non ? 😎",
+      "ttftMs": 1278.5128750000003,
+      "totalMs": 3196.7606249999953,
+      "inputTokens": 3,
+      "outputTokens": 94,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 49.00305500162857,
+      "costUsd": 0.004899,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "La destination DEEE au recyparc est correcte et bien expliquée, mais la réponse omet l'avertissement important de ne pas mettre l'ampoule dans les bulles à verre ni la redirection possible vers Recupel."
+      }
+    },
+    {
+      "caseId": "Q8 pneu",
+      "model": "claude-haiku-4-5",
+      "text": "Super question ! 🛞 Les vieux pneus de voiture, tu dois les apporter **au recyparc dans la zone \"pneus\"**. Là, une entreprise appelée Recytyre les récupère pour les réemployer, les réparer, ou les transformer en nouveaux matériaux ou énergie — rien ne se perd ! \n\nPetit conseil : si tu achètes tes pneus chez un garagiste, souvent il reprend les anciens gratuitement, c'est encore plus simple ! 😉",
+      "ttftMs": 545.9888340000034,
+      "totalMs": 2352.1203340000066,
+      "inputTokens": 1846,
+      "outputTokens": 134,
+      "cacheReadTokens": 0,
+      "tokPerSec": 74.1917185985626,
+      "costUsd": 0.002516,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "La réponse est exacte, complète et bien adaptée aux enfants : recyparc + zone pneus, Recytyre mentionné avec ses filières, et le conseil pratique du garagiste est un bonus pertinent et non inventé."
+      }
+    },
+    {
+      "caseId": "Q8 pneu",
+      "model": "claude-sonnet-4-6",
+      "text": "Les vieux pneus de voiture, ça se dépose au **recyparc**, dans la zone dédiée aux pneus 🚗♻️ ! Ils sont ensuite récupérés par Recytyre qui les réemploie, répare ou recycle. Petit conseil : le garagiste qui pose les nouveaux pneus est souvent obligé de reprendre les anciens, tu peux lui demander directement 😉 !",
+      "ttftMs": 1324.2083329999878,
+      "totalMs": 3946.640124999991,
+      "inputTokens": 3,
+      "outputTokens": 112,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 42.70845111841135,
+      "costUsd": 0.005169,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse complète et bien ancrée : recyparc, Recytyre et ses filières sont correctement cités, avec un conseil pratique pertinent sur la reprise par le garagiste, le tout dans un ton adapté aux enfants."
+      }
+    },
+    {
+      "caseId": "Q14 huile de vidange",
+      "model": "claude-haiku-4-5",
+      "text": "Super question ! 🛢️ L'huile de vidange, c'est un déchet spécial qui doit aller **au recyparc dans la zone \"huiles de vidange\"** — jamais à la poubelle ni dans l'évier ! Bonne nouvelle : elle sera recyclée en nouvelle huile moteur ou en combustible, donc elle a une deuxième vie. 💪",
+      "ttftMs": 597.021332999997,
+      "totalMs": 1882.3478750000068,
+      "inputTokens": 1670,
+      "outputTokens": 98,
+      "cacheReadTokens": 0,
+      "tokPerSec": 76.24521613590024,
+      "costUsd": 0.00216,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "La consigne principale (recyparc, huiles de vidange) est correcte et bien formulée pour un enfant, mais la limite de 20 L et l'absence de collecte à domicile ne sont pas mentionnées, d'où une complétude partielle."
+      }
+    },
+    {
+      "caseId": "Q14 huile de vidange",
+      "model": "claude-sonnet-4-6",
+      "text": "Super réflexe de ne pas la jeter n'importe où ! 🚗🛢️ L'huile de vidange se dépose au **recyparc**, dans un contenant fermé de max. 20 L, dans la zone **huiles de vidange**. Elle sera ensuite recyclée pour fabriquer de nouvelles huiles ou utilisée comme combustible ♻️.",
+      "ttftMs": 1404.4219580000063,
+      "totalMs": 3629.6033330000064,
+      "inputTokens": 3,
+      "outputTokens": 97,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 43.59195213918236,
+      "costUsd": 0.004944,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse complète et fidèle aux faits officiels : recyparc, contenant max 20 L, double valorisation (huile de base + combustible), ton adapté aux enfants avec émojis et encouragement."
+      }
+    },
+    {
+      "caseId": "Q15 lunettes résiduel",
+      "model": "claude-haiku-4-5",
+      "text": "Tes lunettes cassées, c'est dans la **poubelle des déchets ménagers résiduels** (la grise ou celle de ton quartier) ! 🥽 Elles seront ensuite incinérées pour produire de la chaleur et de l'électricité. Petit conseil : si elles ne sont que légèrement endommagées, tu pourrais les donner à une association ou les faire réparer — ça évite les déchets ! ♻️",
+      "ttftMs": 989.6768749999901,
+      "totalMs": 2235.4455829999933,
+      "inputTokens": 1840,
+      "outputTokens": 122,
+      "cacheReadTokens": 0,
+      "tokPerSec": 97.93150142281442,
+      "costUsd": 0.00245,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse parfaitement ancrée dans les faits officiels, avec la bonne consigne de tri, la destination correcte (incinération valorisée), un ton adapté aux enfants et un conseil de prévention pertinent sans invention."
+      }
+    },
+    {
+      "caseId": "Q15 lunettes résiduel",
+      "model": "claude-sonnet-4-6",
+      "text": "Tes vieilles lunettes cassées vont dans la **poubelle des déchets ménagers résiduels** (la poubelle normale) 🗑️. Mais avant de les jeter, vérifie si elles sont encore portables : des associations collectent des lunettes usagées pour les redistribuer à des personnes qui en ont besoin 👓❤️ ! Tu pourrais ainsi leur donner une seconde vie au lieu de les jeter.",
+      "ttftMs": 1608.544167,
+      "totalMs": 3531.614167000007,
+      "inputTokens": 3,
+      "outputTokens": 116,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 60.32021715278153,
+      "costUsd": 0.005229,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 1,
+        "verdict": "La consigne de tri est correcte et le ton est parfaitement adapté aux enfants, mais la mention d'associations qui collectent des lunettes usagées n'est pas ancrée dans le dataset officiel fourni, ce qui constitue une information non vérifiée même si plausible dans la réalité."
+      }
+    },
+    {
+      "caseId": "Q16 sachet de thé (2 matériaux)",
+      "model": "claude-haiku-4-5",
+      "text": "Bonne question ! 🍵 Ça dépend de ton sachet : s'il est **en papier**, oui, il va dans les déchets organiques ! S'il est **en synthétique** (plastique), il faut le mettre dans les déchets ménagers résiduels. Petit conseil : le thé en vrac, c'est meilleur pour la planète ET pour ton portefeuille ! 😉",
+      "ttftMs": 722.7755839999882,
+      "totalMs": 1838.8875839999819,
+      "inputTokens": 1972,
+      "outputTokens": 111,
+      "cacheReadTokens": 0,
+      "tokPerSec": 99.4523847069117,
+      "costUsd": 0.002527,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse parfaite : les deux cas (papier/synthétique) sont correctement traités avec les bonnes filières, le conseil prévention (thé en vrac) est inclus, le ton est adapté aux enfants avec tutoiement et émojis, et aucune information inventée."
+      }
+    },
+    {
+      "caseId": "Q16 sachet de thé (2 matériaux)",
+      "model": "claude-sonnet-4-6",
+      "text": "Bonne question, ça dépend du sachet ! 🍵\n\nSi ton sachet est **en papier** → poubelle des **déchets organiques** ✅\nSi ton sachet est **en plastique/synthétique** → poubelle des **déchets résiduels** (la grise/noire) 🗑️\n\nPetit conseil : le thé en vrac, c'est moins cher et meilleur pour la planète ! 🌿",
+      "ttftMs": 1399.7337920000136,
+      "totalMs": 3750.7430830000085,
+      "inputTokens": 3,
+      "outputTokens": 120,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 51.04190802621556,
+      "costUsd": 0.005289,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse parfaite : les deux filières sont correctement identifiées (papier→organiques, synthétique→résiduels), le conseil prévention (thé en vrac) est pertinent, le ton est adapté aux enfants avec tutoiement et émojis, et aucune information inventée."
+      }
+    },
+    {
+      "caseId": "Q18 bouchon liège",
+      "model": "claude-haiku-4-5",
+      "text": "Non, pas du tout ! 🍷 Le bouchon en liège, c'est spécial : tu dois le déposer **au recyparc dans le bac des bouchons de liège**, où il sera broyé et transformé en isolant pour les maisons. La bouteille en verre, elle, va dans la bulle à verre ! ♻️",
+      "ttftMs": 572.0944590000145,
+      "totalMs": 1665.1440839999996,
+      "inputTokens": 1821,
+      "outputTokens": 93,
+      "cacheReadTokens": 0,
+      "tokPerSec": 85.08305375430807,
+      "costUsd": 0.002286,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "La consigne est correcte (liège → recyparc, verre → bulle), le ton est parfait pour un enfant, mais la distinction avec le bouchon synthétique (sac bleu PMC) est absente, ce qui rend la réponse incomplète."
+      }
+    },
+    {
+      "caseId": "Q18 bouchon liège",
+      "model": "claude-sonnet-4-6",
+      "text": "Bonne question, mais attention à ne pas confondre ! 🍷 Le bouchon en **vrai liège** ne va **pas** dans la bulle à verre : tu le déposes au **recyparc** (bouchons de liège). Par contre, si ton bouchon est en **plastique/synthétique**, lui va dans le **sac bleu PMC** ! 🔵\n\nPetit conseil : le liège broyé sert d'isolant pour construire des maisons, c'est top non ? 🏠",
+      "ttftMs": 1174.1887920000008,
+      "totalMs": 4322.554042000003,
+      "inputTokens": 3,
+      "outputTokens": 135,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 42.87939590236549,
+      "costUsd": 0.005514,
+      "scores": {
+        "exactitude": 2,
+        "completude": 2,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Réponse parfaite : correction claire de l'erreur (pas dans le verre), double filière bien expliquée (recyparc pour liège, sac bleu pour synthétique), valorisation du liège mentionnée, ton enfant avec émojis et tutoiement, aucune invention."
+      }
+    },
+    {
+      "caseId": "Q20 hors-scope maths",
+      "model": "claude-haiku-4-5",
+      "text": "Bonne question, mais ce n'est pas mon domaine ! 😊 Moi, je suis spécialisé dans le tri des déchets et le recyclage. Tu as une question sur comment trier tes déchets ou sur le cycle de vie des matériaux ?",
+      "ttftMs": 616.1085830000229,
+      "totalMs": 1087.3780830000178,
+      "inputTokens": 1618,
+      "outputTokens": 70,
+      "cacheReadTokens": 0,
+      "tokPerSec": 148.53496778382808,
+      "costUsd": 0.001968,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "L'assistant refuse poliment et recentre efficacement vers son domaine sans donner d'info hors-sujet, avec un ton adapté à l'enfant ; légère incomplétude car il ne propose pas d'exemples concrets de questions de tri pour mieux relancer l'enfant."
+      }
+    },
+    {
+      "caseId": "Q20 hors-scope maths",
+      "model": "claude-sonnet-4-6",
+      "text": "Bonne question, mais ce n'est pas mon domaine ! 😊 Moi, je suis spécialisé dans le tri des déchets. Tu as une question sur le recyclage ?",
+      "ttftMs": 1044.7639170000039,
+      "totalMs": 1677.7225840000028,
+      "inputTokens": 3,
+      "outputTokens": 51,
+      "cacheReadTokens": 1160,
+      "tokPerSec": 80.57398161829748,
+      "costUsd": 0.004254,
+      "scores": {
+        "exactitude": 2,
+        "completude": 1,
+        "persona": 2,
+        "scope": 2,
+        "ancrage": 2,
+        "verdict": "Refus poli et recentrage efficace vers le tri des déchets, ton adapté à l'enfant avec émoji, sans aucune info hors domaine ni invention ; légère incomplétude car le recentrage reste vague sans proposer d'exemple concret de question sur le recyclage."
+      }
+    }
+  ],
+  "summary": {
+    "TTFT médian (ms)": [
+      "715",
+      "1,371"
+    ],
+    "TTFT moyen (ms)": [
+      "757",
+      "1,442"
+    ],
+    "Total médian (ms)": [
+      "1,779",
+      "3,690"
+    ],
+    "Débit moyen (tok/s)": [
+      "100.8",
+      "50.3"
+    ],
+    "Tokens out moyen": [
+      "105",
+      "104"
+    ],
+    "Coût moyen / tour ($)": [
+      "0.00236",
+      "0.00476"
+    ],
+    "Score total /10": [
+      "9.42",
+      "9.50"
+    ],
+    "  Exactitude /2": [
+      "2.00",
+      "2.00"
+    ],
+    "  Complétude /2": [
+      "1.50",
+      "1.58"
+    ],
+    "  Persona /2": [
+      "2.00",
+      "2.00"
+    ],
+    "  Scope /2": [
+      "2.00",
+      "2.00"
+    ],
+    "  Ancrage /2": [
+      "1.92",
+      "1.92"
+    ]
+  }
+}

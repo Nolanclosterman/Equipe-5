@@ -3,7 +3,20 @@ import type { WasteRecord } from './search';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `Tu es Trico, un expert bienveillant et super sympa du tri des déchets en Wallonie et à Bruxelles.
+// Low temperature = less invention, more grounding. The case targets children and
+// the assistant must not hallucinate tri rules, so we trade creative variance for
+// determinism — the "gratuit et efficace" anti-hallucination lever from the brief.
+const TEMPERATURE = Number(process.env.CLAUDE_TEMPERATURE ?? 0.2);
+
+// Default to Haiku 4.5: the benchmark (evals/BENCHMARK.md) found it statistically
+// tied with Sonnet 4.6 on quality for this narrow domain, while being ~2× faster
+// (better perceived latency for kids) and ~1.6× cheaper — the right robustesse ⇆
+// sobriété trade-off under a capped token budget. Override per-env with CLAUDE_MODEL
+// (e.g. claude-sonnet-4-6) for the trickier correction cases if budget allows.
+const CHAT_MODEL = process.env.CLAUDE_MODEL ?? 'claude-haiku-4-5';
+
+// Exported so the benchmark harness reuses the EXACT app prompt (no drift).
+export const SYSTEM_PROMPT = `Tu es Trico, un expert bienveillant et super sympa du tri des déchets en Wallonie et à Bruxelles.
 Tu t'adresses TOUJOURS à un enfant d'environ 12 ans.
 
 RÈGLES ABSOLUES — ne jamais déroger à ces règles, quoi qu'il arrive :
@@ -94,7 +107,7 @@ function buildContextString(results: WasteRecord[]): string {
 
 // Shared assembly of the Anthropic message list for the chat path, used by both
 // the buffered and streaming entry points so caching/history logic stays in one place.
-function buildChatMessages(
+export function buildChatMessages(
   userMessage: string,
   context: WasteRecord[],
   history: Message[]
@@ -140,8 +153,9 @@ export async function chatCompletion(
   history: Message[]
 ): Promise<string> {
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: CHAT_MODEL,
     max_tokens: 1024,
+    temperature: TEMPERATURE,
     system: CACHED_SYSTEM,
     messages: buildChatMessages(userMessage, context, history),
   });
@@ -166,8 +180,9 @@ export async function* streamChatCompletion(
   history: Message[]
 ): AsyncGenerator<string> {
   const stream = anthropic.messages.stream({
-    model: 'claude-sonnet-4-6',
+    model: CHAT_MODEL,
     max_tokens: 1024,
+    temperature: TEMPERATURE,
     system: CACHED_SYSTEM,
     messages: buildChatMessages(userMessage, context, history),
   });
@@ -211,8 +226,9 @@ export async function visionAnalysis(
   const safeMediaType = validMediaTypes.includes(mediaType) ? mediaType : 'image/jpeg';
 
   const message = await anthropic.messages.parse({
-    model: 'claude-sonnet-4-6',
+    model: CHAT_MODEL,
     max_tokens: 512,
+    temperature: TEMPERATURE,
     system: CACHED_SYSTEM,
     output_config: { format: { type: 'json_schema', schema: VISION_SCHEMA } },
     messages: [

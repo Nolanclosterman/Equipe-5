@@ -87,6 +87,12 @@ function loadDatasets() {
     threshold: 0.4,
     includeScore: true,
     minMatchCharLength: 2,
+    // Match a keyword anywhere in the field, not just near its start. Without
+    // this, Fuse penalises matches late in a long `dechet` string, so "liège"
+    // failed to retrieve "Bouchon de bouteille de vin en liège" and the wrong
+    // (synthétique) variant won. ignoreLocation makes substring position
+    // irrelevant — the keyword just has to appear.
+    ignoreLocation: true,
   });
 }
 
@@ -143,19 +149,34 @@ export function searchWaste(query: string): WasteRecord[] {
   const queries = new Set<string>();
   for (const c of candidates) expandQuery(c).forEach((q) => queries.add(q));
 
-  // Keep the best (lowest) Fuse score per record across all sub-queries, then
-  // rank globally so a precise keyword match wins over noisy full-sentence hits.
-  const best = new Map<number, { item: WasteRecord; score: number }>();
+  // Per record, keep its best (lowest) Fuse score AND count how many distinct
+  // sub-queries matched it (keyword coverage).
+  const best = new Map<number, { item: WasteRecord; score: number; matches: number }>();
   for (const q of queries) {
-    for (const hit of fuseInstance!.search(q, { limit: 5 })) {
+    // limit 8 (not 5): when many records share a keyword (e.g. all the bouchons
+    // cluster at ~0.02 for "bouchon"), a tight cap drops the on-topic variant
+    // before keyword-coverage ranking can rescue it.
+    for (const hit of fuseInstance!.search(q, { limit: 8 })) {
       const score = hit.score ?? 1;
       const prev = best.get(hit.item.id);
-      if (!prev || score < prev.score) best.set(hit.item.id, { item: hit.item, score });
+      if (!prev) {
+        best.set(hit.item.id, { item: hit.item, score, matches: 1 });
+      } else {
+        prev.matches += 1;
+        if (score < prev.score) prev.score = score;
+      }
     }
   }
 
+  // Rank by keyword coverage FIRST, then best Fuse score. A record matching
+  // several of the query's content words ("bouchon" + "liège" + "vin" →
+  // "Bouchon de bouteille de vin en liège") is more on-topic than one that only
+  // matches an incidental word — e.g. "verre" in "...c'est dans le verre ?",
+  // which otherwise floods the top-5 with every glass record and buries the
+  // right answer. Single-keyword queries (e.g. "lunettes") are unaffected:
+  // every candidate has matches=1, so the score tiebreak decides as before.
   return Array.from(best.values())
-    .sort((a, b) => a.score - b.score)
+    .sort((a, b) => b.matches - a.matches || a.score - b.score)
     .slice(0, 5)
     .map((x) => x.item);
 }
