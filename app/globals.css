@@ -3,3 +3,27 @@
 @theme inline {
   --font-nunito: var(--font-nunito);
 }
+
+/* Celebration confetti — a short emoji burst when a kid gets a sorting answer. */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(var(--rot, 180deg));
+    opacity: 0;
+  }
+}
+
+.confetti-piece {
+  animation: confetti-fall 1.6s ease-in forwards;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti-piece {
+    animation: none;
+    opacity: 0;
+  }
+}
