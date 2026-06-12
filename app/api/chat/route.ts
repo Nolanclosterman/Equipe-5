@@ -40,14 +40,23 @@ export async function POST(request: Request) {
     );
   }
 
+  // History is client-supplied and therefore untrusted (a caller can forge a
+  // prior "assistant" turn). Run every turn through the same sanitizer as the
+  // live message and drop any turn carrying an injection pattern or junk.
   const history: Message[] = Array.isArray(body.history)
-    ? (body.history as Message[]).filter(
-        (m) =>
-          m &&
-          typeof m === 'object' &&
-          (m.role === 'user' || m.role === 'assistant') &&
-          typeof m.content === 'string'
-      )
+    ? (body.history as Message[])
+        .filter(
+          (m) =>
+            m &&
+            typeof m === 'object' &&
+            (m.role === 'user' || m.role === 'assistant') &&
+            typeof m.content === 'string'
+        )
+        .map((m) => {
+          const { valid, sanitized } = sanitizeInput(m.content);
+          return valid && sanitized ? { role: m.role, content: sanitized } : null;
+        })
+        .filter((m): m is Message => m !== null)
     : [];
 
   const wasteResults = searchWaste(sanitized);

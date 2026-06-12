@@ -87,8 +87,13 @@ export async function chatCompletion(
     messages,
   });
 
+  // The API can return an empty content array (e.g. a model-level refusal),
+  // so content[0] may be undefined — guard before reading it.
   const block = response.content[0];
-  return block.type === 'text' ? block.text : '';
+  if (!block || block.type !== 'text') {
+    return "Hmm, je préfère rester sur mon sujet ! 😊 Pose-moi une question sur le tri des déchets et je serai au top ! ♻️";
+  }
+  return block.text;
 }
 
 export async function visionAnalysis(
@@ -130,7 +135,8 @@ Réponds UNIQUEMENT avec le JSON, sans texte avant ou après.`,
     ],
   });
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : '{}';
+  const visionBlock = response.content[0];
+  const text = visionBlock && visionBlock.type === 'text' ? visionBlock.text : '{}';
 
   try {
     const parsed = JSON.parse(text.trim());

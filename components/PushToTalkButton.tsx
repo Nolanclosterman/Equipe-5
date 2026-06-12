@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 // Extend window for webkit prefix
 declare global {
@@ -31,11 +31,15 @@ interface Props {
 
 export default function PushToTalkButton({ onTranscript, disabled }: Props) {
   const [isListening, setIsListening] = useState(false);
+  const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionCompat | null>(null);
 
-  const isSupported =
-    typeof window !== 'undefined' &&
-    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  // Detect support only after mount so server and first client render match (both null).
+  useEffect(() => {
+    setIsSupported(
+      'SpeechRecognition' in window || 'webkitSpeechRecognition' in window
+    );
+  }, []);
 
   const startListening = useCallback(() => {
     if (!isSupported || isListening || disabled) return;
