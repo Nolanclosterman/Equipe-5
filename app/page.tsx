@@ -6,6 +6,7 @@ import ChatWindow from '@/components/ChatWindow';
 import InputBar from '@/components/InputBar';
 import MischiefGame from '@/components/MischiefGame';
 import Confetti from '@/components/Confetti';
+import LiveScanModal from '@/components/LiveScanModal';
 import { detectBins } from '@/lib/bins';
 
 const STORAGE_KEY = 'trico_history';
@@ -31,6 +32,7 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showGame, setShowGame] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const [discovered, setDiscovered] = useState(0);
   const [celebrate, setCelebrate] = useState(0);
 
@@ -279,6 +281,7 @@ export default function Home() {
       <InputBar
         onSendMessage={sendMessage}
         onSendImage={sendImage}
+        onOpenScanner={() => setShowScanner(true)}
         onVoiceError={appendBotBubble}
         onImageError={appendBotBubble}
         disabled={isLoading}
@@ -289,6 +292,9 @@ export default function Home() {
 
       {/* Easter egg: unlocked after repeated injection attempts */}
       {showGame && <MischiefGame onClose={() => setShowGame(false)} />}
+
+      {/* Live AR-style camera scan */}
+      {showScanner && <LiveScanModal onClose={() => setShowScanner(false)} />}
     </div>
   );
 }
