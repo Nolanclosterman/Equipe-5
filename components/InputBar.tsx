@@ -52,7 +52,7 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, dis
         <ImageUploadButton onImageSelected={onSendImage} disabled={disabled} />
         <label
           aria-label="Prendre une photo"
-          className={`flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${
+          className={`sm:hidden flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${
             disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-gray-200 cursor-pointer'
           }`}
         >
