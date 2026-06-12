@@ -8,10 +8,11 @@ interface Props {
   onSendMessage: (text: string) => void;
   onSendImage: (file: File) => void;
   onVoiceError?: (message: string) => void;
+  onImageError?: (message: string) => void;
   disabled?: boolean;
 }
 
-export default function InputBar({ onSendMessage, onSendImage, onVoiceError, disabled }: Props) {
+export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onImageError, disabled }: Props) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -49,7 +50,7 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, dis
     <div className="border-t border-gray-200 bg-white px-4 py-3">
       <div className="mx-auto flex max-w-2xl items-end gap-2">
         <PushToTalkButton onTranscript={handleTranscript} onError={onVoiceError} disabled={disabled} />
-        <ImageUploadButton onImageSelected={onSendImage} disabled={disabled} />
+        <ImageUploadButton onImageSelected={onSendImage} onError={onImageError} disabled={disabled} />
         <label
           aria-label="Prendre une photo"
           className={`sm:hidden flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${

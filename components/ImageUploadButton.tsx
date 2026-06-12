@@ -2,23 +2,28 @@
 
 interface Props {
   onImageSelected: (file: File) => void;
+  onError?: (message: string) => void;
   disabled?: boolean;
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 const MAX_SIZE = 5 * 1024 * 1024;
 
-export default function ImageUploadButton({ onImageSelected, disabled }: Props) {
+export default function ImageUploadButton({ onImageSelected, onError, disabled }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Surface validation problems in-character (in the chat) instead of a jarring
+    // browser alert() that breaks the illusion of talking to Trico.
     if (!ALLOWED_TYPES.includes(file.type)) {
-      alert('Format non supporté. Utilise un JPEG, PNG, GIF ou WebP !');
+      onError?.("Hmm, je ne peux lire que les images (JPEG, PNG, GIF ou WebP) ! 🖼️ Réessaie avec une photo.");
+      e.target.value = '';
       return;
     }
     if (file.size > MAX_SIZE) {
-      alert("L'image est trop lourde ! Maximum 5 Mo.");
+      onError?.("Cette image est un peu trop lourde pour moi ! 😅 Essaie une photo de moins de 5 Mo.");
+      e.target.value = '';
       return;
     }
 
@@ -29,8 +34,9 @@ export default function ImageUploadButton({ onImageSelected, disabled }: Props) 
   return (
     <label
       aria-label="Envoyer une photo"
-      className={`flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${
-        disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-gray-200 cursor-pointer'
+      title="Envoyer une photo"
+      className={`flex h-11 w-11 flex-none items-center justify-center rounded-full bg-blue-50 text-blue-600 transition-colors ${
+        disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-blue-100 cursor-pointer'
       }`}
     >
       <input

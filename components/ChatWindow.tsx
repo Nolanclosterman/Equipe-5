@@ -8,9 +8,10 @@ import WelcomeMessage from './WelcomeMessage';
 interface Props {
   messages: Message[];
   isLoading: boolean;
+  onPickSuggestion?: (query: string) => void;
 }
 
-export default function ChatWindow({ messages, isLoading }: Props) {
+export default function ChatWindow({ messages, isLoading, onPickSuggestion }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function ChatWindow({ messages, isLoading }: Props) {
   return (
     <div className="flex-1 overflow-y-auto px-4 py-2 bg-gray-50">
       {messages.length === 0 ? (
-        <WelcomeMessage />
+        <WelcomeMessage onSelect={onPickSuggestion} />
       ) : (
         <div className="mx-auto max-w-2xl">
           {messages.map((msg, i) => (

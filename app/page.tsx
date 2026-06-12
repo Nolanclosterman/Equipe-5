@@ -30,7 +30,6 @@ function looksLikeOffTopicRefusal(reply: string): boolean {
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showGame, setShowGame] = useState(false);
   const [discovered, setDiscovered] = useState(0);
   const [celebrate, setCelebrate] = useState(0);
@@ -82,6 +81,13 @@ export default function Home() {
     setCelebrate((c) => c + 1);
   };
 
+  // Surface failures as an in-character Trico bubble in the chat, never a scary
+  // red banner or a browser alert — keeps every dead-end kind and in-place.
+  // Memoized (uses only the stable setMessages) so it's a safe useCallback dep.
+  const appendBotBubble = useCallback((text: string) => {
+    setMessages((prev) => [...prev, { role: 'assistant', content: text, timestamp: Date.now() }]);
+  }, []);
+
   // Count blocked injection attempts (client-side). After the threshold, unlock
   // the "Vrai déchet ou Triche ?" easter egg and reset the counter so it can be
   // earned again.
@@ -102,7 +108,6 @@ export default function Home() {
   const sendMessage = useCallback(
     async (text: string) => {
       if (isLoading) return;
-      setError(null);
 
       const userMsg: Message = { role: 'user', content: text, timestamp: Date.now() };
       appendMessage(userMsg);
@@ -122,7 +127,7 @@ export default function Home() {
         if (!res.ok || !contentType.includes('text/plain') || !res.body) {
           const data = await res.json().catch(() => ({}));
           if (!res.ok) {
-            setError(data.error ?? 'Erreur inconnue.');
+            appendBotBubble(data.error ?? "Oups, petit souci ! 😅 Réessaie dans un instant.");
           } else {
             appendMessage({
               role: 'assistant',
@@ -169,18 +174,17 @@ export default function Home() {
         // here on the full reply to also feed the easter-egg counter.
         if (looksLikeOffTopicRefusal(acc)) handleInjectionDetected();
       } catch {
-        setError('Pas de connexion. Vérifie ton internet et réessaie ! 🌐');
+        appendBotBubble("Oups, j'ai perdu le fil ! 🌐 Vérifie ta connexion internet et réessaie 😊");
       } finally {
         setIsLoading(false);
       }
     },
-    [isLoading, messages]
+    [isLoading, messages, appendBotBubble]
   );
 
   const sendImage = useCallback(
     async (file: File) => {
       if (isLoading) return;
-      setError(null);
 
       const userMsg: Message = {
         role: 'user',
@@ -202,7 +206,7 @@ export default function Home() {
         const data = await res.json();
 
         if (!res.ok) {
-          setError(data.error ?? 'Erreur inconnue.');
+          appendBotBubble(data.error ?? "Oups, petit souci ! 😅 Réessaie dans un instant.");
         } else {
           appendMessage({
             role: 'assistant',
@@ -212,12 +216,12 @@ export default function Home() {
           rewardIfSorted(data.reply);
         }
       } catch {
-        setError('Pas de connexion. Vérifie ton internet et réessaie ! 🌐');
+        appendBotBubble("Oups, j'ai perdu le fil ! 🌐 Vérifie ta connexion internet et réessaie 😊");
       } finally {
         setIsLoading(false);
       }
     },
-    [isLoading]
+    [isLoading, appendBotBubble]
   );
 
   const clearHistory = () => {
@@ -264,21 +268,19 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Error banner */}
-      {error && (
-        <div className="flex-none bg-red-50 border-b border-red-200 px-4 py-2">
-          <p className="text-sm text-red-700 text-center">{error}</p>
-        </div>
-      )}
-
       {/* Messages */}
-      <ChatWindow messages={messages} isLoading={isLoading} />
+      <ChatWindow
+        messages={messages}
+        isLoading={isLoading}
+        onPickSuggestion={sendMessage}
+      />
 
       {/* Input */}
       <InputBar
         onSendMessage={sendMessage}
         onSendImage={sendImage}
-        onVoiceError={setError}
+        onVoiceError={appendBotBubble}
+        onImageError={appendBotBubble}
         disabled={isLoading}
       />
 
