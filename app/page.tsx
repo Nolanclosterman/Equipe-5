@@ -4,13 +4,17 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Message } from '@/lib/claude';
 import ChatWindow from '@/components/ChatWindow';
 import InputBar from '@/components/InputBar';
+import MischiefGame from '@/components/MischiefGame';
 
 const STORAGE_KEY = 'trico_history';
+const INJECTION_COUNT_KEY = 'trico_injection_count';
+const INJECTION_THRESHOLD = 5;
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showGame, setShowGame] = useState(false);
 
   // Hydrate from localStorage — must be in useEffect to avoid SSR mismatch
   useEffect(() => {
@@ -38,6 +42,23 @@ export default function Home() {
 
   const appendMessage = (msg: Message) => {
     setMessages((prev) => [...prev, msg]);
+  };
+
+  // Count blocked injection attempts (client-side). After the threshold, unlock
+  // the "Vrai déchet ou Triche ?" easter egg and reset the counter so it can be
+  // earned again.
+  const handleInjectionDetected = () => {
+    try {
+      const next = (parseInt(localStorage.getItem(INJECTION_COUNT_KEY) ?? '0', 10) || 0) + 1;
+      if (next >= INJECTION_THRESHOLD) {
+        localStorage.setItem(INJECTION_COUNT_KEY, '0');
+        setShowGame(true);
+      } else {
+        localStorage.setItem(INJECTION_COUNT_KEY, String(next));
+      }
+    } catch {
+      // Storage unavailable (private mode) — easter egg simply won't trigger
+    }
   };
 
   const sendMessage = useCallback(
@@ -70,6 +91,7 @@ export default function Home() {
               content: data.reply ?? '',
               timestamp: Date.now(),
             });
+            if (data.injection) handleInjectionDetected();
           }
           return;
         }
@@ -204,6 +226,9 @@ export default function Home() {
         onVoiceError={setError}
         disabled={isLoading}
       />
+
+      {/* Easter egg: unlocked after repeated injection attempts */}
+      {showGame && <MischiefGame onClose={() => setShowGame(false)} />}
     </div>
   );
 }
