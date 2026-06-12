@@ -90,13 +90,27 @@ function loadDatasets() {
   });
 }
 
+// Common French filler words that should never drive a dataset match on their own.
+const STOPWORDS = new Set([
+  'les', 'des', 'une', 'mon', 'ton', 'son', 'ses', 'mes', 'tes', 'dans', 'pour', 'avec',
+  'que', 'qui', 'quelle', 'quel', 'poubelle', 'sac', 'jette', 'jeter', 'mets', 'mettre',
+  'met', 'vais', 'fait', 'faire', 'recyparc', 'papa', 'pere', 'mere', 'maison', 'vieux',
+  'vieille', 'vieilles', 'cassees', 'cassee', 'usage', 'usagee', 'plein', 'vide', 'est',
+  'sont', 'aller', 'vont', 'elle', 'elles', 'viens', 'finir', 'comment', 'quand', 'juste',
+  'encore', 'rene', 'renove', 'change', 'changer', 'ancien', 'grille', 'grillee', 'quoi',
+  'vraiment',
+]);
+
 function expandQuery(query: string): string[] {
-  const terms = new Set<string>([query.toLowerCase()]);
+  const lower = query.toLowerCase();
+  const terms = new Set<string>([lower]);
   for (const [canonical, aliases] of Object.entries(synonyms)) {
     const allTerms = [canonical, ...aliases].map((t) => t.toLowerCase());
-    if (allTerms.some((t) => query.toLowerCase().includes(t) || t.includes(query.toLowerCase()))) {
+    // Trigger the group only when one of its aliases actually appears in the
+    // query — not the reverse, which let a short word like "bouteille" pull in
+    // the unrelated "verre" group via its alias "bouteille verre".
+    if (allTerms.some((t) => lower.includes(t))) {
       allTerms.forEach((t) => terms.add(t));
-      terms.add(canonical);
     }
   }
   return Array.from(terms);
@@ -116,21 +130,34 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number): numb
 
 export function searchWaste(query: string): WasteRecord[] {
   loadDatasets();
-  const queries = expandQuery(query);
-  const seen = new Set<number>();
-  const results: WasteRecord[] = [];
 
+  // Search the whole phrase AND each meaningful word it contains, so a natural
+  // sentence like "les vieux journaux de mon père, ça va où ?" still grounds on
+  // the right record ("Journal") instead of returning nothing.
+  const words = query
+    .toLowerCase()
+    .split(/[^a-zàâäéèêëïîôöùûüœç0-9]+/i)
+    .filter((w) => w.length >= 3 && !STOPWORDS.has(w));
+
+  const candidates = new Set<string>([query, ...words]);
+  const queries = new Set<string>();
+  for (const c of candidates) expandQuery(c).forEach((q) => queries.add(q));
+
+  // Keep the best (lowest) Fuse score per record across all sub-queries, then
+  // rank globally so a precise keyword match wins over noisy full-sentence hits.
+  const best = new Map<number, { item: WasteRecord; score: number }>();
   for (const q of queries) {
-    const hits = fuseInstance!.search(q, { limit: 5 });
-    for (const hit of hits) {
-      if (!seen.has(hit.item.id)) {
-        seen.add(hit.item.id);
-        results.push(hit.item);
-      }
+    for (const hit of fuseInstance!.search(q, { limit: 5 })) {
+      const score = hit.score ?? 1;
+      const prev = best.get(hit.item.id);
+      if (!prev || score < prev.score) best.set(hit.item.id, { item: hit.item, score });
     }
   }
 
-  return results.slice(0, 5);
+  return Array.from(best.values())
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 5)
+    .map((x) => x.item);
 }
 
 export function searchRecyparc(location: string): RecyparcRecord[] {
