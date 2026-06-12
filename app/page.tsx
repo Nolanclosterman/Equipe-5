@@ -165,6 +165,7 @@ export default function Home() {
       <InputBar
         onSendMessage={sendMessage}
         onSendImage={sendImage}
+        onVoiceError={setError}
         disabled={isLoading}
       />
     </div>

@@ -7,10 +7,11 @@ import ImageUploadButton from './ImageUploadButton';
 interface Props {
   onSendMessage: (text: string) => void;
   onSendImage: (file: File) => void;
+  onVoiceError?: (message: string) => void;
   disabled?: boolean;
 }
 
-export default function InputBar({ onSendMessage, onSendImage, disabled }: Props) {
+export default function InputBar({ onSendMessage, onSendImage, onVoiceError, disabled }: Props) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -47,7 +48,7 @@ export default function InputBar({ onSendMessage, onSendImage, disabled }: Props
   return (
     <div className="border-t border-gray-200 bg-white px-4 py-3">
       <div className="mx-auto flex max-w-2xl items-end gap-2">
-        <PushToTalkButton onTranscript={handleTranscript} disabled={disabled} />
+        <PushToTalkButton onTranscript={handleTranscript} onError={onVoiceError} disabled={disabled} />
         <ImageUploadButton onImageSelected={onSendImage} disabled={disabled} />
         <textarea
           ref={textareaRef}
