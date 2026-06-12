@@ -6,10 +6,13 @@ import { logUnknownTerm } from '@/lib/db';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+// Vision is the costliest call (and can trigger a second text call), so throttle
+// the image route harder than text.
+const IMAGE_WINDOW_MS = 30_000;
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
-  const { allowed, retryAfter } = checkRateLimit(ip);
+  const { allowed, retryAfter } = checkRateLimit(ip, IMAGE_WINDOW_MS);
 
   if (!allowed) {
     return NextResponse.json(
