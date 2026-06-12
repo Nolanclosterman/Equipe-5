@@ -58,7 +58,7 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, dis
           placeholder="Pose ta question sur le tri... ♻️"
           disabled={disabled}
           rows={1}
-          className="flex-1 resize-none rounded-2xl border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-200 disabled:opacity-50"
+          className="flex-1 resize-none rounded-2xl border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 placeholder:whitespace-nowrap placeholder:overflow-hidden outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-200 disabled:opacity-50"
           style={{ minHeight: '44px', maxHeight: '120px' }}
         />
         <button
@@ -71,10 +71,15 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, dis
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
-            fill="currentColor"
-            className="h-5 w-5 rotate-90"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
           >
-            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
           </svg>
         </button>
       </div>
