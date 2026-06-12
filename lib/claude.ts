@@ -81,7 +81,7 @@ export async function chatCompletion(
   }
 
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: 1024,
     system: SYSTEM_PROMPT,
     messages,
@@ -99,7 +99,7 @@ export async function visionAnalysis(
   const safeMediaType = validMediaTypes.includes(mediaType) ? mediaType : 'image/jpeg';
 
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-6',
     max_tokens: 512,
     system: SYSTEM_PROMPT,
     messages: [

@@ -11,7 +11,7 @@
 | Frontend | **Next.js 14+ (App Router)** | Un seul framework pour le front et le back, déploiement natif sur Vercel |
 | Styling | **Tailwind CSS** | Rapidité de mise en place, pas de fichiers CSS à gérer |
 | API / Backend | **Next.js Route Handlers** (`/app/api/`) | Pas de serveur séparé à déployer, co-localisé avec le front |
-| Modèle IA | **Anthropic API** (Claude claude-sonnet-4-20250514) | Vision multimodale + texte dans un seul modèle ; meilleure robustesse pour identifier des déchets sur des photos de qualité variable prises par des enfants (flou, mauvais cadrage, éclairage médiocre) |
+| Modèle IA | **Anthropic API** (Claude claude-sonnet-4-6) | Vision multimodale + texte dans un seul modèle ; meilleure robustesse pour identifier des déchets sur des photos de qualité variable prises par des enfants (flou, mauvais cadrage, éclairage médiocre) |
 | Recherche fuzzy | **Fuse.js** | Librairie légère, zero-config, intégrable directement côté serveur |
 | Reconnaissance vocale | **Web Speech API** (navigateur) | Native, gratuite, aucun backend requis |
 | Stockage local (DB) | **Fichier JSON dans `/tmp`** (Vercel) | Pas de DB externe ; pour le hackathon, la persistance éphémère suffit |
@@ -90,7 +90,7 @@ Sortie  : { reply: string }
 Flux interne :
   1. Validation taille (≤ 5 Mo) et format (image/*)
   2. Rate limit check (IP, 1/10s)
-  3. Envoi image à Claude Vision (claude-sonnet-4-20250514) avec les URLs des images ODWB candidates
+  3. Envoi image à Claude Vision (claude-sonnet-4-6) avec les URLs des images ODWB candidates
      (les photos.url des enregistrements sont fournies comme contexte visuel de référence)
   4. Si déchet identifié → recherche dans dataset/guide-de-tri0.json → réponse tri
   5. Si image non pertinente → réponse de refus poli
@@ -239,7 +239,7 @@ POST /api/chat
     │   └─ NON → fallback prompt "connaissances tri déchets Wallonie/BXL"
     │             + log terme inconnu → /tmp/unknown-terms.json
     │
-    ├─ Appel Claude claude-sonnet-4-20250514 (prompt + historique + contexte)
+    ├─ Appel Claude claude-sonnet-4-6 (prompt + historique + contexte)
     │
     └─ Réponse textuelle → navigateur → affichage + sauvegarde localStorage
 ```
@@ -255,7 +255,7 @@ POST /api/image
     ├─ Validation taille (≤ 5Mo) / format (image/*)
     ├─ Rate limit OK ?
     │
-    ├─ Appel Claude Vision (claude-sonnet-4-20250514)
+    ├─ Appel Claude Vision (claude-sonnet-4-6)
     │     ├─ Image utilisateur en base64
     │     └─ URLs photos.url des enregistrements ODWB (contexte visuel de référence)
     │
@@ -298,7 +298,7 @@ POST /api/image
 
 | Variable | Environnements | Description |
 |----------|----------------|-------------|
-| `ANTHROPIC_API_KEY` | Production, Preview, Development | Clé API Anthropic (Claude claude-sonnet-4-20250514) |
+| `ANTHROPIC_API_KEY` | Production, Preview, Development | Clé API Anthropic (Claude claude-sonnet-4-6) |
 
 ---
 

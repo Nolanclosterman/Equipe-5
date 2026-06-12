@@ -1,3 +1,4 @@
+import ReactMarkdown from 'react-markdown';
 import type { Message } from '@/lib/claude';
 
 interface Props {
@@ -18,9 +19,33 @@ export default function MessageBubble({ message }: Props) {
             ? 'rounded-br-sm bg-green-600 text-white'
             : 'rounded-bl-sm bg-white text-gray-800 border border-gray-100'
         }`}
-        style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+        style={{ wordBreak: 'break-word' }}
       >
-        {message.content}
+        {isUser ? (
+          <span style={{ whiteSpace: 'pre-wrap' }}>{message.content}</span>
+        ) : (
+          <ReactMarkdown
+            components={{
+              a: ({ href, children }) => (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-green-700 hover:text-green-900 break-all"
+                >
+                  {children}
+                </a>
+              ),
+              p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+              strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+              ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
+              ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
+              li: ({ children }) => <li>{children}</li>,
+            }}
+          >
+            {message.content}
+          </ReactMarkdown>
+        )}
       </div>
       {isUser && (
         <div className="ml-2 mt-1 flex-none text-2xl leading-none select-none">🧒</div>

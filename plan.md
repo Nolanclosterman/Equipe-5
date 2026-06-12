@@ -45,7 +45,7 @@ npm install -D @types/better-sqlite3
 
 | Package | Rôle |
 |---------|------|
-| `@anthropic-ai/sdk` | Client API Anthropic — Claude claude-sonnet-4-20250514 (texte + vision multimodale) |
+| `@anthropic-ai/sdk` | Client API Anthropic — Claude claude-sonnet-4-6 (texte + vision multimodale) |
 | `fuse.js` | Recherche fuzzy dans les datasets locaux |
 | `better-sqlite3` | SQLite synchrone pour logging et apprentissage |
 
@@ -249,7 +249,7 @@ visionAnalysis(
 
 **Implémentation Claude** :
 - Utiliser `@anthropic-ai/sdk` avec `new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })`
-- Modèle : `claude-sonnet-4-20250514` (texte + vision dans le même modèle)
+- Modèle : `claude-sonnet-4-6` (texte + vision dans le même modèle)
 - Le system prompt est passé dans le paramètre `system` de l'API Anthropic (séparé du `messages`)
 - L'input utilisateur est **exclusivement** dans le rôle `user` du tableau `messages`
 - L'historique est transmis comme messages alternés `user` / `assistant`
@@ -272,7 +272,7 @@ Response: { reply: string }
    - Si `infoparc` renseigné → chercher les recyparcs proches dans `dechets-recyparcs.json`
    - Si catégorie DEEE/ampoule → chercher les points Recupel dans `recupel-points-collecte.json`
 5. **Si aucun résultat** → fallback Claude avec indication d'incertitude
-6. Appel Claude claude-sonnet-4-20250514 (system prompt + historique + contexte)
+6. Appel Claude claude-sonnet-4-6 (system prompt + historique + contexte)
 7. Log des termes non reconnus (`lib/logger.ts`)
 8. Retour `{ reply: string }`
 
@@ -288,7 +288,7 @@ Response: { reply: string }
 1. Validation taille (≤ 5 Mo) et format (`image/*`) → 413/415 si invalide
 2. Rate limit check (IP, 1 req / 10s) → 429 si dépassé
 3. Conversion de l'image en base64
-4. Appel Claude Vision (claude-sonnet-4-20250514) avec l'image en base64
+4. Appel Claude Vision (claude-sonnet-4-6) avec l'image en base64
    - Le prompt demande d'identifier le déchet visible sur l'image
    - Claude reçoit aussi les noms et catégories des déchets du dataset comme contexte textuel
 5. **Si déchet identifié** → recherche dans `guide-de-tri0.json` → réponse avec infocollecte/infoparc
