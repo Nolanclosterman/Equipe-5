@@ -262,7 +262,7 @@ Toute entrée utilisateur — qu'elle soit saisie par **texte** ou transmise via
 
 - **Longueur maximale** : tout message est tronqué à 500 caractères côté serveur
 - **Détection de patterns d'injection** : rejet de tout message contenant des formulations visant à redéfinir le rôle du modèle (`ignore tes instructions`, `tu es maintenant`, `oublie tout`, `act as`, `[SYSTEM]`, balises de rôle, etc.)
-- **Séparation stricte des rôles** : l'input utilisateur est transmis **exclusivement** dans le rôle `user` de l'API OpenAI — il ne peut jamais atteindre le `system` prompt
+- **Séparation stricte des rôles** : l'input utilisateur est transmis **exclusivement** dans le rôle `user` de l'API Anthropic — il ne peut jamais atteindre le `system` prompt
 - **System prompt immuable** : la personnalité, le scope et les règles du chatbot sont définis côté serveur et ne peuvent pas être modifiés ou influencés par le contenu d'un message utilisateur
 - **Parité texte/voix** : la transcription vocale passe par le **même pipeline de validation** que la saisie texte — la voix n'est pas un canal moins sécurisé
 - **Comportement en cas de rejet** : réponse neutre côté client ("Je n'ai pas bien compris, peux-tu reformuler ?") — sans révéler la raison du rejet ; événement loggé côté serveur (sans le contenu)

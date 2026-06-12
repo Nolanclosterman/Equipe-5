@@ -11,7 +11,7 @@
 | Frontend | **Next.js 14+ (App Router)** | Un seul framework pour le front et le back, déploiement natif sur Vercel |
 | Styling | **Tailwind CSS** | Rapidité de mise en place, pas de fichiers CSS à gérer |
 | API / Backend | **Next.js Route Handlers** (`/app/api/`) | Pas de serveur séparé à déployer, co-localisé avec le front |
-| Modèle IA | **OpenAI API** (GPT-4o) | Vision multimodale + texte dans un seul modèle ; meilleure robustesse pour identifier des déchets sur des photos de qualité variable prises par des enfants (flou, mauvais cadrage, éclairage médiocre) |
+| Modèle IA | **Anthropic API** (Claude claude-sonnet-4-20250514) | Vision multimodale + texte dans un seul modèle ; meilleure robustesse pour identifier des déchets sur des photos de qualité variable prises par des enfants (flou, mauvais cadrage, éclairage médiocre) |
 | Recherche fuzzy | **Fuse.js** | Librairie légère, zero-config, intégrable directement côté serveur |
 | Reconnaissance vocale | **Web Speech API** (navigateur) | Native, gratuite, aucun backend requis |
 | Stockage local (DB) | **Fichier JSON dans `/tmp`** (Vercel) | Pas de DB externe ; pour le hackathon, la persistance éphémère suffit |
@@ -46,7 +46,7 @@
 │
 ├── lib/
 │   ├── search.ts               ← recherche fuzzy dans dataset/guide-de-tri0.json (Fuse.js)
-│   ├── openai.ts               ← client OpenAI (chat + vision) + system prompt immuable
+│   ├── claude.ts               ← client Anthropic (chat + vision) + system prompt immuable
 │   ├── sanitize.ts             ← validation et protection anti-prompt injection (texte + voix)
 │   ├── db.ts                   ← connexion SQLite (better-sqlite3) + init schéma
 │   ├── rateLimit.ts            ← rate limiting in-memory (1 msg / 10s par IP)
@@ -72,8 +72,8 @@ Flux interne :
   1. Rate limit check (IP, 1/10s)
   2. Sanitisation et validation anti-injection (lib/sanitize.ts)
   3. Fuzzy search dans dataset/guide-de-tri0.json via lib/search.ts
-  4a. Si résultat(s) trouvé(s) → prompt OpenAI avec contexte ODWB + historique
-  4b. Si aucun résultat → prompt OpenAI en mode fallback (connaissances générales tri déchets)
+  4a. Si résultat(s) trouvé(s) → prompt Claude avec contexte ODWB + historique
+  4b. Si aucun résultat → prompt Claude en mode fallback (connaissances générales tri déchets)
   5. Vérification scope (hors sujet → réponse de refus)
   6. Log des termes non reconnus via lib/logger.ts
   7. Retour de la réponse textuelle
@@ -90,7 +90,7 @@ Sortie  : { reply: string }
 Flux interne :
   1. Validation taille (≤ 5 Mo) et format (image/*)
   2. Rate limit check (IP, 1/10s)
-  3. Envoi image à OpenAI Vision (GPT-4o) avec les URLs des images ODWB candidates
+  3. Envoi image à Claude Vision (claude-sonnet-4-20250514) avec les URLs des images ODWB candidates
      (les photos.url des enregistrements sont fournies comme contexte visuel de référence)
   4. Si déchet identifié → recherche dans dataset/guide-de-tri0.json → réponse tri
   5. Si image non pertinente → réponse de refus poli
@@ -111,8 +111,8 @@ Toute entrée utilisateur (texte saisi ou transcription vocale) passe obligatoir
    - `agis comme...` / `act as...`
    - `[SYSTEM]`, `###`, balises XML/HTML simulant un rôle (`<system>`, `<assistant>`)
    - Toute tentative de redéfinir le rôle ou le contexte du modèle
-3. **Séparation stricte des rôles OpenAI** : l'input utilisateur est **toujours** transmis dans le rôle `user` de l'API OpenAI — jamais injecté dans le `system` prompt ni dans un message `assistant`
-4. **System prompt immuable** : le system prompt (personnalité, scope, règles) est défini côté serveur dans `lib/openai.ts` et n'est **jamais** influencé ou modifiable par le contenu utilisateur
+3. **Séparation stricte des rôles API Anthropic** : l'input utilisateur est **toujours** transmis dans le rôle `user` de l'API Anthropic — jamais injecté dans le `system` prompt ni dans un message `assistant`
+4. **System prompt immuable** : le system prompt (personnalité, scope, règles) est défini côté serveur dans `lib/claude.ts` et n'est **jamais** influencé ou modifiable par le contenu utilisateur
 5. **Transcription vocale** : le texte transcrit par la Web Speech API est soumis aux **mêmes validations** que le texte saisi manuellement — la voix n'est pas un canal privilégié
 
 **En cas de détection d'injection :**
@@ -235,11 +235,11 @@ POST /api/chat
     ├─ Fuzzy search (Fuse.js + synonyms.json) dans dataset/guide-de-tri0.json
     │       │
     │   Résultat ?
-    │   ├─ OUI → contexte ODWB injecté dans prompt OpenAI
+    │   ├─ OUI → contexte ODWB injecté dans prompt Claude
     │   └─ NON → fallback prompt "connaissances tri déchets Wallonie/BXL"
     │             + log terme inconnu → /tmp/unknown-terms.json
     │
-    ├─ Appel OpenAI GPT-4o (prompt + historique + contexte)
+    ├─ Appel Claude claude-sonnet-4-20250514 (prompt + historique + contexte)
     │
     └─ Réponse textuelle → navigateur → affichage + sauvegarde localStorage
 ```
@@ -255,7 +255,7 @@ POST /api/image
     ├─ Validation taille (≤ 5Mo) / format (image/*)
     ├─ Rate limit OK ?
     │
-    ├─ Appel OpenAI Vision (GPT-4o)
+    ├─ Appel Claude Vision (claude-sonnet-4-20250514)
     │     ├─ Image utilisateur en base64
     │     └─ URLs photos.url des enregistrements ODWB (contexte visuel de référence)
     │
@@ -298,18 +298,18 @@ POST /api/image
 
 | Variable | Environnements | Description |
 |----------|----------------|-------------|
-| `OPENAI_API_KEY` | Production, Preview, Development | Clé API OpenAI (GPT-4o) |
+| `ANTHROPIC_API_KEY` | Production, Preview, Development | Clé API Anthropic (Claude claude-sonnet-4-20250514) |
 
 ---
 
-### 🔴 ACTION MANUELLE REQUISE — `OPENAI_API_KEY`
+### 🔴 ACTION MANUELLE REQUISE — `ANTHROPIC_API_KEY`
 
 **Où configurer :**
-- **Local** : créer un fichier `.env.local` à la racine du projet avec `OPENAI_API_KEY=sk-...`
+- **Local** : créer un fichier `.env.local` à la racine du projet avec `ANTHROPIC_API_KEY=sk-ant-...`
 - **Vercel** : dashboard → Settings → Environment Variables → ajouter pour les environnements `Production`, `Preview` et `Development`
 
 **Comment obtenir la valeur :**
-1. Se connecter sur [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+1. Se connecter sur [https://console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys)
 2. Créer une nouvelle clé secrète
 3. Copier la valeur immédiatement (elle n'est affichée qu'une seule fois)
 
@@ -324,7 +324,7 @@ POST /api/image
   "dependencies": {
     "next": "^14",
     "react": "^18",
-    "openai": "^4",
+    "@anthropic-ai/sdk": "^0.39",
     "fuse.js": "^7",
     "better-sqlite3": "^9",
     "tailwindcss": "^3"
@@ -474,7 +474,7 @@ Vercel déploie automatiquement **chaque branche** du dépôt GitHub en tant que
 
 > ✅ Vercel génère ces URLs automatiquement dès qu'une branche est poussée — aucune configuration supplémentaire n'est nécessaire avec l'intégration GitHub native.
 
-**Variables d'environnement** : les Preview Deployments héritent des variables d'environnement configurées dans le dashboard Vercel pour l'environnement `Preview` (notamment `OPENAI_API_KEY`). S'assurer que cette variable est bien définie pour les trois environnements Vercel : `Production`, `Preview` et `Development`.
+**Variables d'environnement** : les Preview Deployments héritent des variables d'environnement configurées dans le dashboard Vercel pour l'environnement `Preview` (notamment `ANTHROPIC_API_KEY`). S'assurer que cette variable est bien définie pour les trois environnements Vercel : `Production`, `Preview` et `Development`.
 
 ### 11.4 URL de preview dans la PR
 

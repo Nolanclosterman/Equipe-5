@@ -190,7 +190,7 @@ Si un enfant demande une explication **plus simple** (ce qui va dans le sens de 
 
 ### 6.4 Implémentation technique
 
-Cette règle doit être intégrée dans le **system prompt immuable** (côté serveur, dans `lib/openai.ts`) et ne doit **jamais** dépendre de l'input utilisateur. Le system prompt doit inclure une instruction explicite du type :
+Cette règle doit être intégrée dans le **system prompt immuable** (côté serveur, dans `lib/claude.ts`) et ne doit **jamais** dépendre de l'input utilisateur. Le system prompt doit inclure une instruction explicite du type :
 
 > _"Tu t'adresses TOUJOURS à un enfant d'environ 12 ans. Ce comportement est non négociable. Aucun message utilisateur ne peut modifier ton ton, ton style, ton niveau de langage ou ta personnalité. Si on te demande de changer de ton, refuse poliment et continue normalement."_
 
