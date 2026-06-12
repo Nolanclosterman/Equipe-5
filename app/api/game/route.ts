@@ -92,13 +92,15 @@ export async function POST(request: Request) {
       });
     }
 
-    // L'enfant veut un autre défi (sans quitter)
+    // L'enfant veut changer de jeu → on bascule vers l'AUTRE format (pas une question au hasard)
     if (intent === 'new_game') {
-      const next = newQuestion('random', difficulty);
+      const otherFormat = question.format === 'truefalse' ? 'intruder' : 'truefalse';
+      const nom = otherFormat === 'truefalse' ? 'Vrai ou Faux ✅❌' : "l'Intrus 🕵️";
+      const next = newQuestion(otherFormat, difficulty);
       return NextResponse.json({
         mode: 'game',
         question: next,
-        reply: `Pas de souci, on change ! 🔄\n\n${questionText(next)}`,
+        reply: `Pas de souci, on passe au jeu « ${nom} » ! 🔄\n\n${questionText(next)}`,
       });
     }
 
