@@ -234,12 +234,22 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-[100dvh] flex-col">
-      {/* Header */}
-      <header className="flex-none border-b border-gray-200 bg-white px-4 py-3 shadow-sm">
+    <div className="relative h-[100dvh] overflow-hidden">
+      {/* Messages — full-height scroll; content passes behind the glass bars */}
+      <ChatWindow
+        messages={messages}
+        isLoading={isLoading}
+        onPickSuggestion={sendMessage}
+      />
+
+      {/* Header — floating Liquid Glass nav bar */}
+      <header
+        className="glass-bar glass-bar--top absolute inset-x-0 top-0 z-20 px-4 py-3"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
+      >
         <div className="mx-auto flex max-w-2xl items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">♻️</span>
+            <img src="/trico-avatar.png" alt="Trico" className="h-9 w-9 flex-none rounded-full object-cover select-none" />
             <div>
               <h1 className="text-lg font-extrabold text-green-700 leading-tight">Trico</h1>
               <p className="text-xs text-gray-500 leading-tight">Expert du tri en Wallonie &amp; Bruxelles</p>
@@ -268,21 +278,16 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Messages */}
-      <ChatWindow
-        messages={messages}
-        isLoading={isLoading}
-        onPickSuggestion={sendMessage}
-      />
-
-      {/* Input */}
-      <InputBar
-        onSendMessage={sendMessage}
-        onSendImage={sendImage}
-        onVoiceError={appendBotBubble}
-        onImageError={appendBotBubble}
-        disabled={isLoading}
-      />
+      {/* Input — floating Liquid Glass bar pinned to the bottom */}
+      <div className="absolute inset-x-0 bottom-0 z-20">
+        <InputBar
+          onSendMessage={sendMessage}
+          onSendImage={sendImage}
+          onVoiceError={appendBotBubble}
+          onImageError={appendBotBubble}
+          disabled={isLoading}
+        />
+      </div>
 
       {/* Celebration burst when a sorting answer is given */}
       <Confetti trigger={celebrate} />

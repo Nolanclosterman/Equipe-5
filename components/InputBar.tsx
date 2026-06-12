@@ -47,14 +47,17 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onI
   };
 
   return (
-    <div className="border-t border-gray-200 bg-white px-4 py-3">
+    <div
+      className="glass-bar glass-bar--bottom px-4 py-3"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.75rem)' }}
+    >
       <div className="mx-auto flex max-w-2xl items-end gap-2">
         <PushToTalkButton onTranscript={handleTranscript} onError={onVoiceError} disabled={disabled} />
         <ImageUploadButton onImageSelected={onSendImage} onError={onImageError} disabled={disabled} />
         <label
           aria-label="Prendre une photo"
-          className={`sm:hidden relative overflow-hidden flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${
-            disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-gray-200 cursor-pointer'
+          className={`sm:hidden glass-control glass-press relative overflow-hidden flex h-11 w-11 flex-none items-center justify-center rounded-full glass-label ${
+            disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'cursor-pointer'
           }`}
         >
           <input
@@ -81,7 +84,7 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onI
           placeholder="Pose ta question sur le tri... ♻️"
           disabled={disabled}
           rows={1}
-          className="flex-1 resize-none rounded-2xl border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 placeholder:whitespace-nowrap placeholder:overflow-hidden outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-200 disabled:opacity-50"
+          className="glass-field flex-1 resize-none rounded-2xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 placeholder:whitespace-nowrap placeholder:overflow-hidden outline-none transition disabled:opacity-50"
           style={{ minHeight: '44px', maxHeight: '120px' }}
         />
         <button
@@ -89,7 +92,7 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onI
           onClick={handleSubmit}
           disabled={disabled || !input.trim()}
           aria-label="Envoyer"
-          className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-green-600 text-white transition-colors hover:bg-green-700 disabled:opacity-40"
+          className="glass-press flex h-11 w-11 flex-none items-center justify-center rounded-full bg-green-600 text-white shadow-[0_4px_12px_rgba(52,199,89,0.4)] transition-colors hover:bg-green-700 disabled:opacity-40"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

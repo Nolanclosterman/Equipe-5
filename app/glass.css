@@ -1,0 +1,365 @@
+/* ============================================================
+ * glass-tokens.css — GENERATED from ios-tokens.json (Apple iOS 27 UI kit).
+ * Do NOT hand-edit. Re-run:  node build-tokens.mjs
+ * Light values live in :root; dark values override under prefers-color-scheme.
+ * ============================================================ */
+
+:root {
+  /* — primitives — */
+  /* SF Pro is the system face on Apple OSes; system-ui resolves to it there, graceful elsewhere */
+  --font-sf: ui-sans-serif, system-ui, -apple-system, "SF Pro", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
+  --glass-radius: 22px;
+  --glass-radius-pill: 999px;
+
+  /* — typography (SF Pro, default leading) — */
+  --text-largetitle-size: 34px;
+  --text-largetitle-line: 1.2059;
+  --text-largetitle-weight: 400;
+  --text-largetitle-weight-bold: 700;
+  --text-title1-size: 28px;
+  --text-title1-line: 1.2143;
+  --text-title1-weight: 400;
+  --text-title1-weight-bold: 700;
+  --text-title2-size: 22px;
+  --text-title2-line: 1.2727;
+  --text-title2-weight: 400;
+  --text-title2-weight-bold: 700;
+  --text-title3-size: 20px;
+  --text-title3-line: 1.25;
+  --text-title3-weight: 400;
+  --text-title3-weight-bold: 600;
+  --text-headline-size: 17px;
+  --text-headline-line: 1.2941;
+  --text-headline-weight: 600;
+  --text-body-size: 17px;
+  --text-body-line: 1.2941;
+  --text-body-weight: 400;
+  --text-body-weight-bold: 600;
+  --text-callout-size: 16px;
+  --text-callout-line: 1.3125;
+  --text-callout-weight: 400;
+  --text-callout-weight-bold: 600;
+  --text-subheadline-size: 15px;
+  --text-subheadline-line: 1.3333;
+  --text-subheadline-weight: 400;
+  --text-subheadline-weight-bold: 600;
+  --text-footnote-size: 13px;
+  --text-footnote-line: 1.3846;
+  --text-footnote-weight: 400;
+  --text-footnote-weight-bold: 600;
+  --text-caption1-size: 12px;
+  --text-caption1-line: 1.3333;
+  --text-caption1-weight: 400;
+  --text-caption1-weight-bold: 500;
+  --text-caption2-size: 11px;
+  --text-caption2-line: 1.1818;
+  --text-caption2-weight: 400;
+  --text-caption2-weight-bold: 600;
+
+  /* — semantic colors / labels / fills / materials / liquid glass (LIGHT) — */
+  --color-red: #FF383C;
+  --color-purple: #CB30E0;
+  --color-pink: #FF2D55;
+  --color-brown: #AC7F5E;
+  --color-orange: #FF8D28;
+  --color-yellow: #FFCC00;
+  --color-green: #34C759;
+  --color-mint: #00C8B3;
+  --color-teal: #00C3D0;
+  --color-cyan: #00C0E8;
+  --color-blue: #0088FF;
+  --color-indigo: #6155F5;
+  --glass-accent: var(--color-blue);
+  --label-primary: #000000;
+  --label-secondary: rgba(60, 60, 67, 0.6);
+  --label-tertiary: rgba(60, 60, 67, 0.3);
+  --label-quaternary: rgba(60, 60, 67, 0.18);
+  --label-quinary: rgba(60, 60, 67, 0.09);
+  --label-glass-primary: #1A1A1A;
+  --label-glass-secondary: #727272;
+  --label-glass-tertiary: #BFBFBF;
+  --label-glass-quaternary: #D9D9D9;
+  --fill-primary: rgba(120, 120, 120, 0.2);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(116, 116, 128, 0.08);
+  --fill-quinary: rgba(0, 0, 0, 0.02);
+  --gray-gray: #8E8E93;
+  --gray-gray-2: #AEAEB2;
+  --gray-gray-3: #C7C7CC;
+  --gray-gray-4: #D1D1D6;
+  --gray-gray-5: #E5E5EA;
+  --gray-gray-6: #F2F2F7;
+  --separator-non-opaque: rgba(0, 0, 0, 0.12);
+  --separator-opaque: #C6C6C8;
+  --separator-vibrant: #E6E6E6;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F2F2F7;
+  --bg-tertiary: #FFFFFF;
+  --material-thick: rgba(255, 255, 255, 0.34);
+  --material-regular-default: rgba(255, 255, 255, 0.25);
+  --material-thin: rgba(255, 255, 255, 0.05);
+  --material-ultrathin: rgba(255, 255, 255, 0.07);
+  --lg-clear-fill: rgba(248, 248, 248, 0.12);
+  --lg-clear-shadow:
+    0px 8px 15px 0px rgba(0, 0, 0, 0.02),
+    0px 0px 0px 0.5px #D9D9D9,
+    -1.25px 0px 0px -0.75px #CCCCCC,
+    1.25px 0px 0px -0.75px #CCCCCC,
+    -20px 0px 20px -30px #D9D9D9,
+    20px 0px 20px -30px #D9D9D9,
+    0px -4px 0.5px -4px #666666,
+    0px 4px 0.5px -4px #666666,
+    0px 40px 30px -40px #E6E6E6,
+    0px -1px 0px 0px #333333,
+    0px 1px 0px 0px #333333,
+    0px -40px 20px -40px #404040,
+    0px 40px 20px -40px #404040;
+  --lg-lock-screen-time-fill: rgba(248, 248, 248, 0.25);
+  --lg-lock-screen-time-shadow:
+    0px -4px 0.5px -4px #333333,
+    0px -4px 0.5px -4px #333333,
+    0px -0.5px 0px 0px #333333,
+    0px 0.5px 0px 0px #333333,
+    0px -10px 5px -10px #404040,
+    0px 10px 5px -10px #404040,
+    0px 8px 15px 0px rgba(0, 0, 0, 0.02),
+    0px 0px 0px 0.5px #D9D9D9,
+    -1.25px 0px 0px -0.75px #E6E6E6,
+    1.25px 0px 0px -0.75px #E6E6E6;
+  --lg-widget-glass-fill: linear-gradient(180deg, #000000 0%, #171717 100%);
+  --lg-widget-glass-shadow:
+    0px -4px 0.5px -4px #666666,
+    0px 4px 0.5px -4px #666666,
+    0px -1px 0px 0px #1A1A1A,
+    0px 1px 0px 0px #1A1A1A,
+    0px -20px 10px -20px #222222,
+    0px 20px 10px -20px #222222;
+  --lg-app-library-fill: rgba(248, 248, 248, 0.08);
+  --lg-app-library-shadow:
+    0px 0px 0px 0.5px #D9D9D9,
+    -1.25px 0px 0px -0.75px #CCCCCC,
+    1.25px 0px 0px -0.75px #CCCCCC,
+    0px -4px 0.5px -4px #666666,
+    0px 4px 0.5px -4px #666666,
+    0px -1px 0px 0px #333333,
+    0px 1px 0px 0px #333333;
+  --lg-dock-fill: rgba(153, 153, 153, 0.33);
+  --lg-dock-shadow:
+    -20px 0px 20px -30px #D9D9D9,
+    20px 0px 20px -30px #D9D9D9,
+    0px -4px 0.5px -4px #666666,
+    0px 4px 0.5px -4px #666666,
+    0px -1px 0px 0px #333333,
+    0px 1px 0px 0px #333333,
+    0px -35px 15px -35px #1A1A1A,
+    0px 35px 15px -35px #333333,
+    0px 0px 0px 0.5px #D9D9D9,
+    -1.25px 0px 0px -0.75px #CCCCCC,
+    1.25px 0px 0px -0.75px #CCCCCC;
+  --lg-keyboard-background-fill: rgba(212, 212, 212, 0.74);
+  --lg-keyboard-background-shadow:
+    0px 0px 8px 1px rgba(0, 0, 0, 0.2),
+    -1px -1px 2px 0px #1A1A1A,
+    1px 1px 2px 0px #1A1A1A,
+    2px 2px 0.25px -1.5px rgba(255, 255, 255, 0.7);
+  --lg-regular-large-fill: rgba(255, 255, 255, 0.7);
+  --lg-regular-large-shadow:
+    0px -4px 2px -4px #272727,
+    0px 4px 8px -4px #272727,
+    0px -1px 1.5px -0.5px #272727,
+    0px 1px 1.5px -0.5px #272727,
+    0px 2px 0.25px -1.2px #FFFFFF,
+    0px 18px 46px 0px rgba(0, 0, 0, 0.25),
+    0px 0px 0.3px 0.3px #DBDBDB,
+    -1.25px 0px 0px -0.75px #BFBFBF,
+    1.25px 0px 0px -0.75px #BFBFBF;
+  --lg-regular-medium-fill: rgba(204, 204, 204, 0.7);
+  --lg-regular-medium-shadow:
+    0px -4px 2px -4px #272727,
+    0px 4px 8px -4px #272727,
+    0px -1px 1.5px -0.5px #272727,
+    0px 1px 1.5px -0.5px #272727,
+    0px 2px 0.25px -1.2px #FFFFFF,
+    0px 18px 46px 0px rgba(0, 0, 0, 0.25),
+    0px 0px 0.3px 0.3px #DBDBDB,
+    -1.25px 0px 0px -0.75px #DBDBDB,
+    1.25px 0px 0px -0.75px #DBDBDB;
+  --lg-regular-small-fill: rgba(248, 248, 248, 0.2);
+  --lg-regular-small-shadow:
+    0px 8px 15px 0px rgba(0, 0, 0, 0.02),
+    0px 0px 0px 0.5px #DBDBDB,
+    -1.25px 0px 0px -0.75px #DBDBDB,
+    1.25px 0px 0px -0.75px #DBDBDB,
+    -20px 0px 20px -30px #D9D9D9,
+    20px 0px 20px -30px #D9D9D9,
+    0px -4px 0.5px -4px #666666,
+    0px 4px 0.5px -4px #666666,
+    0px -1px 0px 0px #171717,
+    0px 1px 0px 0px #171717,
+    0px 40px 30px -40px #E6E6E6,
+    0px -40px 10px -40px #282828,
+    0px 40px 10px -40px #282828;
+  --lg-regular-small-inactive-fill: rgba(0, 0, 0, 0.02);
+  --lg-regular-small-inactive-shadow:
+    0px 0px 0px 0.5px #EBEBEB;
+  --lg-regular-small-tinted-fill: #FFFFFF;
+  --lg-regular-small-tinted-shadow:
+    20px 0px 20px -30px #D9D9D9,
+    -20px 0px 20px -30px #D9D9D9,
+    0px -4px 0.5px -4px #999999,
+    0px 4px 0.5px -4px #999999,
+    0px -1px 0px 0px #262626,
+    0px 1px 0px 0px #262626,
+    0px -40px 10px -40px #111111,
+    0px 40px 10px -40px #111111,
+    0px 8px 15px 0px rgba(0, 0, 0, 0.04),
+    -1.25px 0px 0px -0.75px #E6E6E6,
+    1.25px 0px 0px -0.75px #E6E6E6;
+}
+
+/* ============================================================
+ * Liquid Glass utilities — WEB-TUNED.
+ * The raw --lg-*-shadow stacks above are Apple's native reference data
+ * (authored for iOS element sizes / wallpapers). On a light web page at
+ * small sizes they read as invisible (bars) or a dark blob (small pills),
+ * so the visible material below is hand-built FROM the token values:
+ *   - tint opacity informed by Materials
+ *   - specular edge informed by the kit's white edge highlights
+ *   - System Colors for accent tints, glass label ramp for vibrancy
+ * Glass stays the floating chrome layer; content stays opaque.
+ * ============================================================ */
+
+/* Colored, kid-friendly backdrop so the frosted blur actually shows. */
+.app-bg {
+  background:
+    radial-gradient(120% 75% at 0% 0%, #9ff0c4 0%, rgba(159, 240, 196, 0) 55%),
+    radial-gradient(120% 75% at 100% 0%, #a9d9ff 0%, rgba(169, 217, 255, 0) 55%),
+    radial-gradient(140% 90% at 50% 120%, #bff3dc 0%, rgba(191, 243, 220, 0) 60%),
+    #eaf5ee;
+  background-attachment: fixed;
+}
+
+/* Floating glass pill/panel — legible at any size. */
+.glass {
+  position: relative;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+          backdrop-filter: blur(16px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),   /* specular top edge */
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+    0 6px 16px rgba(0, 0, 0, 0.12),            /* float */
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  isolation: isolate;
+}
+/* Control pill that lives INSIDE a glass bar — NO own backdrop-filter
+ * (nesting backdrop-filters renders black; the bar already frosts the bg).
+ * Just a translucent tint + specular highlight + soft float shadow. */
+.glass-control {
+  position: relative;
+  /* Apple: neutral, mostly clear — the frosted bar/bubbles show through.
+   * Colour lives in the ICON, not the disc. */
+  background: rgba(255, 255, 255, 0.38);
+  box-shadow:
+    inset 0 0.5px 0.5px rgba(255, 255, 255, 0.95),   /* bright specular top edge */
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.35),      /* thin glass rim */
+    inset 0 -2px 4px rgba(0, 0, 0, 0.05),             /* subtle bottom shade */
+    0 1px 2px rgba(0, 0, 0, 0.10),                    /* contact shadow */
+    0 5px 14px rgba(0, 0, 0, 0.08);                   /* soft float */
+}
+
+/* optional faint brand tint (unused by default — Apple discs stay neutral) */
+.glass-green { background: color-mix(in srgb, var(--color-green) 14%, rgba(255, 255, 255, 0.45)); }
+.glass-blue  { background: color-mix(in srgb, var(--color-blue) 12%, rgba(255, 255, 255, 0.45)); }
+
+/* Edge-to-edge bars (top nav / bottom input).
+ * iOS-style: NO divider. The bar's white veil fades into the content (gradient),
+ * and the backdrop blur fades out via a mask — so bubbles scrolling behind melt
+ * softly into the chrome instead of meeting a hard line. */
+.glass-bar {
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+          backdrop-filter: blur(18px) saturate(160%);
+}
+.glass-bar--top {
+  /* opaque white at the very top (status/title), fading down into the chat */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.80) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+}
+.glass-bar--bottom {
+  /* Uniformly translucent so blurred bubbles show through the whole bar (Apple).
+   * Mask fades only the top edge so the blur melts into the chat; controls sit
+   * in the lower ~80% (opaque mask) and stay crisp. */
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.55) 70%,
+    rgba(255, 255, 255, 0.30) 100%
+  );
+  -webkit-mask-image: linear-gradient(to top, #000 78%, transparent 100%);
+          mask-image: linear-gradient(to top, #000 78%, transparent 100%);
+}
+
+/* Frosted translucent input field (Apple text-field on glass) */
+.glass-field {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 0 0.5px 0.5px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.glass-field:focus {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 0 0 1px var(--color-green),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* vibrancy: labels/icons ON glass use the dedicated glass label ramp */
+.glass-label     { color: var(--label-glass-primary); }
+.glass-label-sec { color: var(--label-glass-secondary); }
+
+/* press feedback (restrained spring, HIG) */
+.glass-press { transition: transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.glass-press:active:not(:disabled) { transform: scale(0.94); }
+
+/* ---- Accessibility fallbacks: ship with the material ---- */
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-control, .glass-field, .glass-bar, .glass-green, .glass-blue {
+    background: var(--bg-primary);
+    -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+  }
+  .glass, .glass-control { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18); }
+  .glass-field { box-shadow: inset 0 0 0 1px var(--separator-opaque); }
+  .glass-bar--top, .glass-bar--bottom {
+    background: var(--bg-primary);
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .glass-bar--top    { box-shadow: 0 1px 0 var(--separator-opaque); }
+  .glass-bar--bottom { box-shadow: 0 -1px 0 var(--separator-opaque); }
+}
+@media (prefers-contrast: more) {
+  .glass, .glass-control, .glass-field, .glass-green, .glass-blue { background: var(--bg-primary); border: 1px solid var(--label-primary); box-shadow: none; }
+  .glass-bar--top, .glass-bar--bottom {
+    background: var(--bg-primary);
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .glass-bar--top    { box-shadow: 0 1px 0 var(--label-primary); }
+  .glass-bar--bottom { box-shadow: 0 -1px 0 var(--label-primary); }
+  :root { --label-glass-primary: #000; --label-glass-secondary: #3c3c43; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass-press { transition: none; }
+  .glass-press:active:not(:disabled) { transform: none; }
+}

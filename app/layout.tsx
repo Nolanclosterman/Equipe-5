@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${nunito.variable} h-full`}>
-      <body className="h-full font-nunito antialiased bg-gray-50">{children}</body>
+      <body className="h-full font-nunito antialiased bg-white">{children}</body>
     </html>
   );
 }
