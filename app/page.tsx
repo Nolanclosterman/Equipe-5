@@ -167,7 +167,7 @@ export default function Home() {
           const data = await res.json();
 
           if (!res.ok) {
-            setError(data.error ?? 'Erreur inconnue.');
+            appendBotBubble(data.error ?? "Oups, petit souci ! 😅 Réessaie dans un instant.");
           } else {
             appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
             setDifficulty(data.difficulty ?? 'debutant');
@@ -188,7 +188,7 @@ export default function Home() {
           const data = await res.json();
 
           if (!res.ok) {
-            setError(data.error ?? 'Erreur inconnue.');
+            appendBotBubble(data.error ?? "Oups, petit souci ! 😅 Réessaie dans un instant.");
           } else {
             appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
             if (typeof data.correct === 'boolean') {
