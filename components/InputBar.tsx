@@ -50,6 +50,28 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, dis
       <div className="mx-auto flex max-w-2xl items-end gap-2">
         <PushToTalkButton onTranscript={handleTranscript} onError={onVoiceError} disabled={disabled} />
         <ImageUploadButton onImageSelected={onSendImage} disabled={disabled} />
+        <label
+          aria-label="Prendre une photo"
+          className={`sm:hidden flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${
+            disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-gray-200 cursor-pointer'
+          }`}
+        >
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="sr-only"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) { onSendImage(file); e.target.value = ''; }
+            }}
+            disabled={disabled}
+          />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+            <circle cx="12" cy="13" r="3"/>
+          </svg>
+        </label>
         <textarea
           ref={textareaRef}
           value={input}

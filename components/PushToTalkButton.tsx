@@ -50,6 +50,11 @@ export default function PushToTalkButton({ onTranscript, onError, disabled }: Pr
   const startListening = useCallback(() => {
     if (!isSupported || isListening || disabled) return;
 
+    if (!window.isSecureContext) {
+      onError?.('La reconnaissance vocale nécessite HTTPS. Déploie sur Vercel ou utilise ngrok pour tester en local. 🔒');
+      return;
+    }
+
     const w = window as unknown as Record<string, unknown>;
     const Ctor = (w.webkitSpeechRecognition ?? w.SpeechRecognition) as (new () => SpeechRecognitionCompat) | undefined;
     if (!Ctor) return;
