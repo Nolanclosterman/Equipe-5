@@ -10,6 +10,20 @@ const STORAGE_KEY = 'trico_history';
 const INJECTION_COUNT_KEY = 'trico_injection_count';
 const INJECTION_THRESHOLD = 5;
 
+// Stock phrases Trico falls back on when declining an off-topic question. They
+// come from the system-prompt formulas and never appear in a genuine
+// waste-sorting answer, so they're a low-false-positive signal of a refusal.
+// Checked client-side on the assembled reply, since the answer is streamed.
+const OFF_TOPIC_MARKERS = ['pas mon domaine', 'pas mon truc', 'bien essaye', 'bonne tentative', 'je reste trico'];
+
+function looksLikeOffTopicRefusal(reply: string): boolean {
+  const normalized = reply
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, ''); // strip accents so "essayé" matches "essaye"
+  return OFF_TOPIC_MARKERS.some((marker) => normalized.includes(marker));
+}
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -125,6 +139,10 @@ export default function Home() {
         }
         acc += decoder.decode(); // flush any trailing multi-byte char (accents/emojis)
         applyChunk();
+
+        // Off-topic refusals stream as normal text (no JSON flag), so detect them
+        // here on the full reply to also feed the easter-egg counter.
+        if (looksLikeOffTopicRefusal(acc)) handleInjectionDetected();
       } catch {
         setError('Pas de connexion. Vérifie ton internet et réessaie ! 🌐');
       } finally {
