@@ -184,6 +184,24 @@ export async function* streamChatCompletion(
   logCacheUsage('chat-stream', final.usage);
 }
 
+// Structured-output schema for the vision identification step. Using
+// output_config guarantees schema-valid JSON, so we no longer hand-strip
+// markdown fences or risk a JSON.parse failure turning a real identification
+// into "I couldn't analyze this".
+const VISION_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['identified', 'wasteName', 'reply'],
+  properties: {
+    identified: { type: 'boolean' },
+    wasteName: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+    reply: { type: 'string' },
+  },
+};
+
+const VISION_FALLBACK =
+  "Je n'ai pas réussi à analyser cette image. 🤔 Essaie avec une autre photo ou décris le déchet en texte !";
+
 export async function visionAnalysis(
   imageBase64: string,
   mediaType: string
@@ -191,10 +209,11 @@ export async function visionAnalysis(
   const validMediaTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   const safeMediaType = validMediaTypes.includes(mediaType) ? mediaType : 'image/jpeg';
 
-  const response = await anthropic.messages.create({
+  const message = await anthropic.messages.parse({
     model: 'claude-sonnet-4-6',
     max_tokens: 512,
     system: CACHED_SYSTEM,
+    output_config: { format: { type: 'json_schema', schema: VISION_SCHEMA } },
     messages: [
       {
         role: 'user',
@@ -209,38 +228,30 @@ export async function visionAnalysis(
           },
           {
             type: 'text',
-            text: `Regarde attentivement cette image. Y a-t-il un déchet ou un objet qu'on pourrait recycler ou jeter ?
-Si oui, identifie-le précisément et réponds en JSON avec ce format exact :
-{"identified": true, "wasteName": "nom précis du déchet en français", "reply": "ta réponse complète adaptée à un enfant de 12 ans avec émojis"}
-
-Si l'image ne montre pas de déchet ou d'objet à recycler, réponds :
-{"identified": false, "wasteName": null, "reply": "Hmm, je ne vois pas de déchet sur cette image ! 🤔 Envoie-moi la photo d'un objet dont tu veux savoir comment le recycler, et je ferai de mon mieux pour t'aider !"}
-
-Réponds UNIQUEMENT avec le JSON, sans texte avant ou après.`,
+            text: `Regarde attentivement cette image et identifie le déchet ou l'objet à trier.
+- "identified": true si tu reconnais un déchet/objet à recycler ou jeter, sinon false.
+- "wasteName": le nom précis du déchet en français (ex: "canette en aluminium"), ou null si rien n'est identifié.
+- "reply": ta réponse complète et bienveillante pour un enfant d'environ 12 ans, avec des émojis. Si rien n'est identifié, invite gentiment l'enfant à envoyer une autre photo ou à décrire l'objet.`,
           },
         ],
       },
     ],
   });
 
-  const visionBlock = response.content[0];
-  const raw = visionBlock && visionBlock.type === 'text' ? visionBlock.text : '{}';
+  logCacheUsage('vision', message.usage);
 
-  // Claude sometimes wraps JSON in markdown fences (```json ... ```) — strip them
-  const text = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+  // Refusal or unparseable output → degrade gracefully, never throw a blank.
+  const parsed = message.parsed_output as
+    | { identified?: boolean; wasteName?: string | null; reply?: string }
+    | null;
 
-  try {
-    const parsed = JSON.parse(text);
-    return {
-      identified: parsed.identified === true,
-      wasteName: parsed.wasteName ?? undefined,
-      reply: parsed.reply ?? "Je n'ai pas réussi à analyser cette image. 🤔 Essaie avec une autre photo !",
-    };
-  } catch (err) {
-    console.error('[visionAnalysis] JSON parse failed. Raw response:', raw, err);
-    return {
-      identified: false,
-      reply: "Je n'ai pas réussi à analyser cette image. 🤔 Essaie avec une autre photo !",
-    };
+  if (message.stop_reason === 'refusal' || !parsed) {
+    return { identified: false, reply: VISION_FALLBACK };
   }
+
+  return {
+    identified: parsed.identified === true,
+    wasteName: parsed.wasteName ?? undefined,
+    reply: parsed.reply ?? VISION_FALLBACK,
+  };
 }

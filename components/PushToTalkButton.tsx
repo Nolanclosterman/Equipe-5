@@ -121,7 +121,7 @@ export default function PushToTalkButton({ onTranscript, onError, disabled }: Pr
       className={`flex h-11 w-11 flex-none items-center justify-center rounded-full transition-colors ${
         isListening
           ? 'bg-red-500 text-white animate-pulse'
-          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+          : 'bg-green-50 text-green-600 hover:bg-green-100'
       } disabled:opacity-40 disabled:cursor-not-allowed`}
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">

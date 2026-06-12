@@ -6,6 +6,13 @@ import { streamChatCompletion } from '@/lib/claude';
 import { logUnknownTerm, logQuestionPattern } from '@/lib/db';
 import type { Message } from '@/lib/claude';
 
+// Bound the work an attacker can force per request: reject obviously oversized
+// payloads early, and cap how many history turns we sanitize. A message is 500
+// chars max (sanitizer) and only the last 10 turns reach Claude, so this is
+// generous headroom while blocking multi-MB bodies.
+const MAX_BODY_BYTES = 64 * 1024;
+const MAX_HISTORY_TURNS = 20;
+
 export async function POST(request: Request) {
   const ip = getClientIp(request);
   const { allowed, retryAfter } = checkRateLimit(ip);
@@ -17,6 +24,16 @@ export async function POST(request: Request) {
         status: 429,
         headers: { 'Retry-After': String(retryAfter) },
       }
+    );
+  }
+
+  // Reject oversized bodies before parsing (cheap header check — defends the
+  // JSON.parse + per-turn sanitize work below from a multi-MB payload).
+  const contentLength = Number(request.headers.get('content-length') ?? 0);
+  if (contentLength > MAX_BODY_BYTES) {
+    return NextResponse.json(
+      { error: 'Message trop long. ✂️' },
+      { status: 413 }
     );
   }
 
@@ -48,6 +65,7 @@ export async function POST(request: Request) {
   // live message and drop any turn carrying an injection pattern or junk.
   const history: Message[] = Array.isArray(body.history)
     ? (body.history as Message[])
+        .slice(-MAX_HISTORY_TURNS)
         .filter(
           (m) =>
             m &&
