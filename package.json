@@ -8,7 +8,8 @@
     "clean": "rm -rf .next/",
     "vercel-build": "npm rebuild better-sqlite3 --build-from-source && next build",
     "start": "if [ ! -d .next ]; then npm run build; fi && next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "eval": "node evals/run-evals.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",

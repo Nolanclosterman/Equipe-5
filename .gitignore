@@ -44,3 +44,6 @@ next-env.d.ts
 .env.local
 /data/learning.db*
 /tmp/
+
+# Generated eval report
+/evals/eval-report.md
