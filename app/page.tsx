@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Message } from '@/lib/claude';
+import type { GameQuestion, Difficulty } from '@/lib/game';
 import ChatWindow from '@/components/ChatWindow';
 import InputBar from '@/components/InputBar';
 import MischiefGame from '@/components/MischiefGame';
@@ -11,6 +12,7 @@ import { detectBins } from '@/lib/bins';
 const STORAGE_KEY = 'trico_history';
 const DISCOVERED_KEY = 'trico_discovered';
 const INJECTION_COUNT_KEY = 'trico_injection_count';
+const GAME_KEY = 'trico_game';
 const INJECTION_THRESHOLD = 5;
 
 // Stock phrases Trico falls back on when declining an off-topic question. They
@@ -27,12 +29,24 @@ function looksLikeOffTopicRefusal(reply: string): boolean {
   return OFF_TOPIC_MARKERS.some((marker) => normalized.includes(marker));
 }
 
+type Mode = 'chat' | 'game';
+interface Score {
+    correct: number;
+    total: number;
+}
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [discovered, setDiscovered] = useState(0);
   const [celebrate, setCelebrate] = useState(0);
+
+  const [mode, setMode] = useState<Mode>('chat');
+  const [question, setQuestion] = useState<GameQuestion | null>(null);
+  const [score, setScore] = useState<Score>({ correct: 0, total: 0 });
+  const [difficulty, setDifficulty] = useState<Difficulty | null>(null);
+  const [awaitingDifficulty, setAwaitingDifficulty] = useState(false);
 
   // Hydrate from localStorage — must be in useEffect to avoid SSR mismatch
   useEffect(() => {
@@ -44,6 +58,22 @@ export default function Home() {
       }
       const storedCount = parseInt(localStorage.getItem(DISCOVERED_KEY) ?? '', 10);
       if (!Number.isNaN(storedCount)) setDiscovered(storedCount);
+
+        const gameStored = localStorage.getItem(GAME_KEY);
+        if (gameStored) {
+          const g = JSON.parse(gameStored) as {
+            mode: Mode;
+            question: GameQuestion | null;
+            score: Score;
+            difficulty?: Difficulty | null;
+            awaitingDifficulty?: boolean;
+          };
+          if (g.mode) setMode(g.mode);
+          if (g.question) setQuestion(g.question);
+          if (g.score) setScore(g.score);
+          if (g.difficulty) setDifficulty(g.difficulty);
+          if (g.awaitingDifficulty) setAwaitingDifficulty(g.awaitingDifficulty);
+        }
     } catch {
       // Ignore corrupt storage
     }
@@ -59,6 +89,18 @@ export default function Home() {
       }
     }
   }, [messages]);
+
+  // Persist game state
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        GAME_KEY,
+        JSON.stringify({ mode, question, score, difficulty, awaitingDifficulty })
+      );
+    } catch {
+      // ignore
+    }
+  }, [mode, question, score, difficulty, awaitingDifficulty]);
 
   const appendMessage = (msg: Message) => {
     setMessages((prev) => [...prev, msg]);
@@ -109,11 +151,59 @@ export default function Home() {
     async (text: string) => {
       if (isLoading) return;
 
-      const userMsg: Message = { role: 'user', content: text, timestamp: Date.now() };
-      appendMessage(userMsg);
+      appendMessage({ role: 'user', content: text, timestamp: Date.now() });
       setIsLoading(true);
 
       try {
+        // ── Choix du niveau : on démarre la partie avec la difficulté ──
+        if (mode === 'game' && awaitingDifficulty) {
+          const picked: Difficulty | undefined =
+            text === 'expert' || text === 'debutant' ? text : undefined;
+          const res = await fetch('/api/game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'start', format: 'random', message: text, difficulty: picked }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            appendBotBubble(data.error ?? "Oups, petit souci ! 😅 Réessaie dans un instant.");
+          } else {
+            appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
+            setDifficulty(data.difficulty ?? 'debutant');
+            setAwaitingDifficulty(false);
+            setQuestion(data.question ?? null);
+            setMode('game');
+          }
+          return;
+        }
+
+        // ── En pleine partie : on envoie la réponse au moteur de jeu ──
+        if (mode === 'game' && question) {
+          const res = await fetch('/api/game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'answer', question, message: text, difficulty }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            appendBotBubble(data.error ?? "Oups, petit souci ! 😅 Réessaie dans un instant.");
+          } else {
+            appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
+            if (typeof data.correct === 'boolean') {
+              setScore((s) => ({ correct: s.correct + (data.correct ? 1 : 0), total: s.total + 1 }));
+            }
+            const nextMode = data.mode === 'chat' ? 'chat' : 'game';
+            setMode(nextMode);
+            setQuestion(data.question ?? null);
+            if (nextMode === 'chat') setDifficulty(null);
+            else if (data.difficulty) setDifficulty(data.difficulty);
+          }
+          return;
+        }
+
+        // ── Mode conversation normal ──
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -128,6 +218,14 @@ export default function Home() {
           const data = await res.json().catch(() => ({}));
           if (!res.ok) {
             appendBotBubble(data.error ?? "Oups, petit souci ! 😅 Réessaie dans un instant.");
+          } else if (data.chooseDifficulty) {
+            // L'enfant veut jouer → on lui demande d'abord son niveau
+            appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
+            setMode('game');
+            setAwaitingDifficulty(true);
+            setQuestion(null);
+            setDifficulty(null);
+            setScore({ correct: 0, total: 0 });
           } else {
             appendMessage({
               role: 'assistant',
@@ -179,30 +277,25 @@ export default function Home() {
         setIsLoading(false);
       }
     },
-    [isLoading, messages, appendBotBubble]
+    [isLoading, messages, appendBotBubble, mode, question, difficulty, awaitingDifficulty]
   );
 
   const sendImage = useCallback(
     async (file: File) => {
       if (isLoading) return;
 
-      const userMsg: Message = {
+      appendMessage({
         role: 'user',
         content: `📷 Photo envoyée : ${file.name}`,
         timestamp: Date.now(),
-      };
-      appendMessage(userMsg);
+      });
       setIsLoading(true);
 
       try {
         const formData = new FormData();
         formData.append('image', file);
 
-        const res = await fetch('/api/image', {
-          method: 'POST',
-          body: formData,
-        });
-
+        const res = await fetch('/api/image', { method: 'POST', body: formData });
         const data = await res.json();
 
         if (!res.ok) {
@@ -226,12 +319,36 @@ export default function Home() {
 
   const clearHistory = () => {
     setMessages([]);
+    setMode('chat');
+    setQuestion(null);
+    setScore({ correct: 0, total: 0 });
+    setDifficulty(null);
+    setAwaitingDifficulty(false);
     try {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(GAME_KEY);
     } catch {
       // ignore
     }
   };
+
+  // Boutons de réponse rapide : choix du niveau, puis selon le format de question
+  const quickReplies = (() => {
+    if (mode !== 'game') return [];
+    if (awaitingDifficulty) {
+      return [
+        { label: '🟢 Débutant', value: 'debutant' },
+        { label: '🔴 Expert', value: 'expert' },
+      ];
+    }
+    if (!question) return [];
+    return question.format === 'truefalse'
+      ? [
+          { label: 'Vrai ✅', value: 'Vrai' },
+          { label: 'Faux ❌', value: 'Faux' },
+        ]
+      : question.items.map((_, i) => ({ label: `${i + 1}`, value: `${i + 1}` }));
+  })();
 
   return (
     <div className="flex h-[100dvh] flex-col">
@@ -253,6 +370,13 @@ export default function Home() {
                 aria-label={`${discovered} objets découverts`}
               >
                 🌟 {discovered}
+              </span>
+            )}
+            {mode === 'game' && (
+                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">
+                {awaitingDifficulty
+                    ? '🎮 Choix du niveau'
+                    : `🎮 ${difficulty === 'expert' ? '🔴 Expert' : '🟢 Débutant'} · ${score.correct}/${score.total}`}
               </span>
             )}
             {messages.length > 0 && (
@@ -282,6 +406,7 @@ export default function Home() {
         onVoiceError={appendBotBubble}
         onImageError={appendBotBubble}
         disabled={isLoading}
+        quickReplies={quickReplies}
       />
 
       {/* Celebration burst when a sorting answer is given */}

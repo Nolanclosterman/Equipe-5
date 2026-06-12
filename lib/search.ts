@@ -211,3 +211,8 @@ export function getAllWasteNames(): string[] {
   loadDatasets();
   return wasteData.map((w) => `${w.dechet} (${w.categorie})`);
 }
+
+export function getAllWasteRecords(): WasteRecord[] {
+  loadDatasets();
+  return wasteData;
+}

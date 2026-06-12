@@ -12,7 +12,7 @@ const IMAGE_WINDOW_MS = 30_000;
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
-  const { allowed, retryAfter } = checkRateLimit(ip, IMAGE_WINDOW_MS);
+  const { allowed, retryAfter } = checkRateLimit(ip, IMAGE_WINDOW_MS, 2);
 
   if (!allowed) {
     return NextResponse.json(

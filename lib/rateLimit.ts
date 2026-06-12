@@ -1,8 +1,8 @@
 // Cost / abuse guard for the LLM-bound routes.
 //
 // Two layers:
-//  1. Per-IP throttle (default 1 request / 10s; the image route uses a longer
-//     window since vision is the costliest call).
+//  1. Per-IP sliding-window throttle (default 5 requests / 10s; the image
+//     route uses a longer window since vision is the costliest call).
 //  2. A global per-instance ceiling on total allowed LLM calls per rolling
 //     minute. This is the real cost backstop: even if a caller shards requests
 //     across many spoofed IP values, total spend stays bounded. It is per
@@ -12,32 +12,34 @@
 //     MAX_LLM_CALLS_PER_MIN.
 
 const DEFAULT_WINDOW_MS = 10_000;
+const DEFAULT_MAX_PER_WINDOW = 5;
 const GLOBAL_WINDOW_MS = 60_000;
 const GLOBAL_MAX = Math.max(1, Number(process.env.MAX_LLM_CALLS_PER_MIN ?? 60));
 
-const ipTimestamps = new Map<string, number>();
+const ipTimestamps = new Map<string, number[]>();
 let globalHits: number[] = [];
 
 function cleanup(now: number) {
-  for (const [ip, ts] of ipTimestamps) {
-    if (now - ts > 60_000) ipTimestamps.delete(ip);
+  for (const [ip, timestamps] of ipTimestamps) {
+    const fresh = timestamps.filter((t) => now - t < DEFAULT_WINDOW_MS * 6);
+    if (fresh.length === 0) ipTimestamps.delete(ip);
+    else ipTimestamps.set(ip, fresh);
   }
 }
 
 export function checkRateLimit(
   ip: string,
-  windowMs: number = DEFAULT_WINDOW_MS
+  windowMs: number = DEFAULT_WINDOW_MS,
+  maxPerWindow: number = DEFAULT_MAX_PER_WINDOW
 ): { allowed: boolean; retryAfter?: number } {
   const now = Date.now();
   cleanup(now);
 
-  // Layer 1 — per-IP throttle.
-  const last = ipTimestamps.get(ip);
-  if (last !== undefined) {
-    const elapsed = now - last;
-    if (elapsed < windowMs) {
-      return { allowed: false, retryAfter: Math.ceil((windowMs - elapsed) / 1000) };
-    }
+  // Layer 1 — per-IP sliding window.
+  const recent = (ipTimestamps.get(ip) ?? []).filter((t) => now - t < windowMs);
+  if (recent.length >= maxPerWindow) {
+    const oldest = recent[0];
+    return { allowed: false, retryAfter: Math.ceil((windowMs - (now - oldest)) / 1000) };
   }
 
   // Layer 2 — global per-instance ceiling.
@@ -51,7 +53,8 @@ export function checkRateLimit(
   }
 
   // Passed both layers — record the call.
-  ipTimestamps.set(ip, now);
+  recent.push(now);
+  ipTimestamps.set(ip, recent);
   globalHits.push(now);
   return { allowed: true };
 }

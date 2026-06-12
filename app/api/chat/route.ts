@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { sanitizeInput } from '@/lib/sanitize';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { searchWaste } from '@/lib/search';
-import { streamChatCompletion } from '@/lib/claude';
+import { streamChatCompletion, chatCompletion } from '@/lib/claude';
+import { classifyChatIntent } from '@/lib/intent';
 import { logUnknownTerm, logQuestionPattern } from '@/lib/db';
 import type { Message } from '@/lib/claude';
 
@@ -79,6 +80,21 @@ export async function POST(request: Request) {
         })
         .filter((m): m is Message => m !== null)
     : [];
+
+  // L'enfant veut-il jouer ? Si oui, on signale au client de lancer une partie.
+  try {
+    const intent = await classifyChatIntent(sanitized);
+    if (intent === 'start_game') {
+      return NextResponse.json({
+        startGame: true,
+        chooseDifficulty: true,
+        reply: `🎮 Oh oui, on joue ! Tu veux quel niveau ?\n\n🟢 **Débutant** — les déchets de tous les jours\n🔴 **Expert** — les déchets spéciaux (recyparc, piles, huiles…)`,
+      });
+    }
+  } catch (error) {
+    console.error('[chat] intent classification failed:', error);
+    // En cas d'échec, on continue comme une question normale.
+  }
 
   const wasteResults = searchWaste(sanitized);
 

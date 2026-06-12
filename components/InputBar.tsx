@@ -4,15 +4,21 @@ import { useState, useRef, useCallback } from 'react';
 import PushToTalkButton from './PushToTalkButton';
 import ImageUploadButton from './ImageUploadButton';
 
+interface QuickReply {
+  label: string;
+  value: string;
+}
+
 interface Props {
   onSendMessage: (text: string) => void;
   onSendImage: (file: File) => void;
   onVoiceError?: (message: string) => void;
   onImageError?: (message: string) => void;
   disabled?: boolean;
+  quickReplies?: QuickReply[];
 }
 
-export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onImageError, disabled }: Props) {
+export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onImageError, disabled, quickReplies = [] }: Props) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -48,6 +54,21 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onI
 
   return (
     <div className="border-t border-gray-200 bg-white px-4 py-3">
+      {quickReplies.length > 0 && (
+          <div className="mx-auto mb-2 flex max-w-2xl flex-wrap gap-2">
+            {quickReplies.map((qr) => (
+                <button
+                    key={qr.value}
+                    type="button"
+                    onClick={() => !disabled && onSendMessage(qr.value)}
+                    disabled={disabled}
+                    className="rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-sm font-semibold text-green-700 transition-colors hover:bg-green-100 disabled:opacity-40"
+                >
+                  {qr.label}
+                </button>
+            ))}
+          </div>
+      )}
       <div className="mx-auto flex max-w-2xl items-end gap-2">
         <PushToTalkButton onTranscript={handleTranscript} onError={onVoiceError} disabled={disabled} />
         <ImageUploadButton onImageSelected={onSendImage} onError={onImageError} disabled={disabled} />
