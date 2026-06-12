@@ -7,12 +7,13 @@ import ImageUploadButton from './ImageUploadButton';
 interface Props {
   onSendMessage: (text: string) => void;
   onSendImage: (file: File) => void;
+  onOpenScanner: () => void;
   onVoiceError?: (message: string) => void;
   onImageError?: (message: string) => void;
   disabled?: boolean;
 }
 
-export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onImageError, disabled }: Props) {
+export default function InputBar({ onSendMessage, onSendImage, onOpenScanner, onVoiceError, onImageError, disabled }: Props) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -51,6 +52,24 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onI
       <div className="mx-auto flex max-w-2xl items-end gap-2">
         <PushToTalkButton onTranscript={handleTranscript} onError={onVoiceError} disabled={disabled} />
         <ImageUploadButton onImageSelected={onSendImage} onError={onImageError} disabled={disabled} />
+        <button
+          type="button"
+          onClick={onOpenScanner}
+          disabled={disabled}
+          aria-label="Scan en direct avec la caméra"
+          title="Scan en direct"
+          className={`flex h-11 w-11 flex-none items-center justify-center rounded-full bg-green-50 text-green-600 transition-colors ${
+            disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-green-100 cursor-pointer'
+          }`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
         <label
           aria-label="Prendre une photo"
           className={`sm:hidden relative overflow-hidden flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${
