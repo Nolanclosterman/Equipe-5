@@ -11,6 +11,7 @@ import {
   checkIntruder,
   explainAnswer,
   parseDifficulty,
+  parseLevelChange,
   type GameQuestion,
   type Difficulty,
 } from '@/lib/game';
@@ -89,6 +90,19 @@ export async function POST(request: Request) {
         mode: 'game',
         question: next,
         reply: `${explainAnswer(question)}\n\n---\nUne autre pour t'entraîner ! 👇\n\n${questionText(next)}`,
+      });
+    }
+
+    // L'enfant veut changer de NIVEAU de difficulté
+    if (intent === 'change_level') {
+      const newDifficulty = parseLevelChange(sanitized, difficulty);
+      const niveau = newDifficulty === 'expert' ? '🔴 Expert' : '🟢 Débutant';
+      const next = newQuestion('random', newDifficulty);
+      return NextResponse.json({
+        mode: 'game',
+        difficulty: newDifficulty,
+        question: next,
+        reply: `Ok, on passe en niveau ${niveau} ! 🎚️\n\n${questionText(next)}`,
       });
     }
 

@@ -7,6 +7,7 @@ export type GameIntent =
   | 'answer_game'
   | 'dont_know'
   | 'new_game'
+  | 'change_level'
   | 'ask_question'
   | 'quit_game';
 
@@ -22,7 +23,8 @@ const GAME_INSTRUCTIONS = `Un enfant est EN TRAIN DE JOUER à un jeu de tri (une
 Classe son message :
 - "answer_game" : il répond au défi (ex: "vrai", "faux", "le numéro 2", "la canette", "sac bleu"). Les réponses de jeu sont souvent COURTES.
 - "dont_know" : il ne sait pas, hésite ou demande la réponse (ex: "je sais pas", "chais pas", "aucune idée", "j'hésite", "c'est quoi la réponse ?", "dis-moi", "?", "hmm", "trop dur").
-- "new_game" : il veut une AUTRE question ou changer de jeu, mais CONTINUER à jouer (ex: "on change de jeu", "autre question", "passe", "je veux un autre défi", "change", "suivant").
+- "new_game" : il veut une AUTRE question ou changer de TYPE de jeu (Vrai/Faux ↔ Intrus), mais au MÊME niveau (ex: "on change de jeu", "autre question", "passe", "je veux un autre défi", "suivant").
+- "change_level" : il veut changer de NIVEAU de difficulté (ex: "passe en débutant", "niveau facile", "je veux le mode expert", "mets plus difficile", "change de niveau", "c'est trop facile").
 - "ask_question" : il ne répond PAS au défi, mais veut savoir où trier un AUTRE objet ou pose une question sur le tri (ex: "attends, c'est quoi le PMC ?", "et une bouteille en verre, ça va où ?", "comment je trie une pizza ?", ou il cite un ou des objets à trier qui ne sont pas une réponse valide au défi).
 - "quit_game" : il veut ARRÊTER complètement de jouer (ex: "stop", "j'arrête", "on arrête de jouer", "j'en ai marre", "je veux juste discuter").`;
 
@@ -74,6 +76,7 @@ export async function classifyGameIntent(
     intent === 'answer_game' ||
     intent === 'dont_know' ||
     intent === 'new_game' ||
+    intent === 'change_level' ||
     intent === 'ask_question' ||
     intent === 'quit_game'
   ) {

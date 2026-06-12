@@ -198,6 +198,7 @@ export default function Home() {
             setMode(nextMode);
             setQuestion(data.question ?? null);
             if (nextMode === 'chat') setDifficulty(null);
+            else if (data.difficulty) setDifficulty(data.difficulty);
           }
           return;
         }

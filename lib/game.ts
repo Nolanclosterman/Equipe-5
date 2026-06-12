@@ -185,6 +185,17 @@ export function parseDifficulty(message: string): Difficulty {
   return 'debutant';
 }
 
+/**
+ * Détermine le nouveau niveau quand l'enfant demande à changer de niveau :
+ * niveau explicite s'il est nommé, sinon on bascule vers l'autre.
+ */
+export function parseLevelChange(message: string, current?: Difficulty): Difficulty {
+  const m = normalize(message);
+  if (/\b(expert|dur|difficile|fort|avance|pro|costaud)\b/.test(m)) return 'expert';
+  if (/\b(debutant|debut|facile|simple|easy)\b/.test(m)) return 'debutant';
+  return current === 'expert' ? 'debutant' : 'expert';
+}
+
 // Déchets exploitables : ceux dont on connaît au moins une poubelle, filtrés par niveau.
 function playablePool(difficulty?: Difficulty): WasteRecord[] {
   return getAllWasteRecords().filter(
