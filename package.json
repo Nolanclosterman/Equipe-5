@@ -7,7 +7,7 @@
     "build": "next build",
     "clean": "rm -rf .next/",
     "vercel-build": "npm rebuild better-sqlite3 --build-from-source && next build",
-    "start": "next start",
+    "start": "if [ ! -d .next ]; then npm run build; fi && next start",
     "lint": "eslint"
   },
   "dependencies": {
