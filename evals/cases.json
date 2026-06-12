@@ -1,0 +1,46 @@
+{
+  "_comment": "Cas d'évaluation extraits de chatbot-evals.md et personality.md, sous forme machine-lisible pour le runner CI (evals/run-evals.mjs). Chaque cas a un id, une question (ou des 'turns' pour le multi-tours), et 'expected' = ce que le juge doit vérifier. Mettez à jour ce fichier en même temps que les .md.",
+  "functional": [
+    { "id": "Q1", "question": "Je viens de finir ma bouteille de coca en plastique, je la mets où ?", "expected": "Tri = sac bleu PMC. Bonus possible: devient des granulés/nouveaux objets, ou prévention (gourde/consigne)." },
+    { "id": "Q2", "question": "Ma canette de soda est vide, elle va dans quelle poubelle ?", "expected": "Tri = sac bleu PMC (bien vidée). Bonus: fondue pour de nouveaux produits métalliques." },
+    { "id": "Q3", "question": "Mon pot de yaourt en plastique, c'est pour le sac bleu ou le sac blanc ?", "expected": "Tri = sac bleu PMC (pas le sac blanc)." },
+    { "id": "Q4", "question": "Mon vieux téléphone ne marche plus, je fais quoi avec ?", "expected": "Tri = recyparc, zone DEEE (déchets électroniques). Réemploi conseillé si en bon état." },
+    { "id": "Q5", "question": "Où est-ce que je jette mes vieilles piles ?", "expected": "Tri = recyparc (piles) ou collecteur/bac en magasin. PAS la poubelle. Métaux récupérés." },
+    { "id": "Q6", "question": "J'ai des fleurs fanées, c'est quel sac ?", "expected": "Deux options: collecte des déchets organiques à domicile ET recyparc (déchets verts). Devient du compost." },
+    { "id": "Q7", "question": "Mon ampoule LED est grillée, c'est quoi la poubelle ?", "expected": "Tri = recyparc, zone DEEE. PAS dans les bulles à verre." },
+    { "id": "Q8", "question": "On a changé les pneus de la voiture, on en fait quoi des vieux ?", "expected": "Tri = recyparc (pneus), ou reprise chez un vendeur agréé. Recytyre." },
+    { "id": "Q9", "question": "La boîte à oeufs en carton, je la mets dans les papiers-cartons ?", "expected": "Oui: collecte papiers-cartons à domicile, ou recyparc (papiers-cartons)." },
+    { "id": "Q10", "question": "Un mouchoir en papier usagé, c'est dans les déchets résiduels ?", "expected": "Non: collecte des déchets ORGANIQUES (pas résiduels). Doit corriger l'idée reçue. Biométhanisé." },
+    { "id": "Q11", "question": "La barquette en alu de mon plat, je la jette où ?", "expected": "Tri = sac bleu PMC (bien lavée)." },
+    { "id": "Q12", "question": "On rénove la maison et il y a de l'amiante, on la met au recyparc ?", "expected": "Amiante floquée/libre = INTERDIT au recyparc -> collecteur agréé. (Seule l'amiante-ciment est acceptée sous conditions dans certains recyparcs.) Doit alerter et orienter vers un pro." },
+    { "id": "Q13", "question": "Les vieux journaux de mon père, ça va où ?", "expected": "Tri = collecte papiers-cartons (PAS le sac bleu PMC), ou recyparc papiers-cartons / bulle à papier." },
+    { "id": "Q14", "question": "Mon père a vidangé la voiture, on fait quoi de l'huile usagée ?", "expected": "Tri = recyparc (huiles de vidange), bidon max 20 L. JAMAIS poubelle/évier." },
+    { "id": "Q15", "question": "Mes vieilles lunettes sont cassées, je les mets dans quelle poubelle ?", "expected": "Tri = déchets ménagers résiduels (sac blanc/gris). Don possible si en bon état. Ne pas inventer d'organisme précis." },
+    { "id": "Q16", "question": "Mon sachet de thé, il va dans les déchets organiques ?", "expected": "Ça dépend: sachet papier -> déchets organiques; sachet synthétique/nylon -> déchets résiduels. Idéalement demander la matière ou donner les deux cas." },
+    { "id": "Q17", "question": "On change de matelas, l'ancien on le met où ?", "expected": "Tri = recyparc: zone matelas si bon état, encombrants si abîmé/brûlé." },
+    { "id": "Q18", "question": "Le bouchon en liège de la bouteille de vin, c'est dans le verre ?", "expected": "Non, PAS dans le verre: recyparc (bouchons de liège) ou borne de collecte dédiée. La bouteille en verre, elle, va à la bulle à verre." },
+    { "id": "Q19", "question": "La cartouche d'encre de l'imprimante est vide, je la jette comment ?", "expected": "Tri = recyparc (DEEE) ou bac de collecte en magasin. Déchet à traitement spécial." },
+    { "id": "Q20", "question": "Tu peux m'aider avec mes devoirs de maths ?", "expected": "HORS SCOPE: doit refuser poliment et recentrer sur le tri des déchets, SANS donner aucune info de maths." }
+  ],
+  "personality": [
+    { "id": "P2", "question": "La canette ça va dans le sac bleu PMC, non ?", "expected": "Confirme avec enthousiasme + félicite (bravo/super) + ajoute une info bonus. Pas juste 'oui'. Émojis de célébration." },
+    { "id": "P3", "question": "Les piles ça va dans la poubelle normale, non ?", "expected": "Corrige SANS juger, dédramatise (erreur courante/pas de souci), donne la bonne réponse (recyparc/collecteur piles), explique le pourquoi (danger/recyclage). Émojis doux, pas d'émoji négatif agressif." },
+    { "id": "P4", "question": "Où je jette une bouteille en plastique ?", "expected": "Répond (sac bleu PMC) PUIS rebondit avec un fait/anecdote ET pose une question de suivi. Ton engageant." },
+    { "id": "P5", "question": "C'est quoi le PMC ?", "expected": "Explique le sigle (Plastiques, Métaux, Cartons à boissons) avec des exemples concrets (bouteilles, canettes). Vocabulaire simple, pas de jargon non expliqué." },
+    { "id": "P8", "question": "Où je jette un truc vraiment bizarre comme un tapis de yoga en mousse ?", "expected": "Admet l'incertitude ('je ne suis pas sûr / je n'ai pas ce déchet précis'), tente une réponse raisonnable, suggère de vérifier auprès de l'intercommunale. Ne fabrique pas de nom d'organisme/recyparc précis." },
+    { "id": "P9", "question": "Pourquoi je dois trier mes déchets ? C'est nul.", "expected": "Ne juge pas l'opinion. Explique l'impact concret avec exemples de transformation (devient un pull, un banc...) ou chiffres parlants. Motive sans culpabiliser. Émojis nature/planète." },
+    { "id": "P13", "question": "Comment je jette ma bouteille d'eau en plastique ?", "expected": "Donne le tri d'abord (sac bleu PMC) PUIS un conseil de prévention (gourde, eau du robinet...) formulé en suggestion, pas en ordre." },
+    { "id": "P17", "question": "J'en ai marre, le tri c'est trop compliqué, il y a trop de poubelles différentes !", "expected": "Accueille la frustration avec empathie (sans minimiser), simplifie/rassure (peu de poubelles à retenir), encourage sans culpabiliser." },
+    { "id": "P18", "question": "slt ta canette de fanta tu la me ou?? je cpmrend pa", "expected": "Comprend malgré les fautes/SMS (canette -> sac bleu PMC), répond normalement, NE corrige PAS l'orthographe et ne fait aucune remarque sur l'écriture." },
+    { "id": "P19", "question": "Le verre ça va où ?", "expected": "Réponse concise (idéalement quelques phrases), info de tri essentielle présente (bouteilles/bocaux -> bulle à verre). Acceptable de distinguer brièvement les types de verre, mais sans pavé." },
+    { "id": "P7", "turns": [
+        "C'est quoi le recyparc ?",
+        "Mais en fait je comprends pas, un recyparc c'est comme une déchetterie ?",
+        "Ok mais concrètement on y fait quoi au recyparc ?"
+      ], "expected": "PATIENCE: reformule et enrichit à chaque tour sans jamais montrer d'impatience ('je te l'ai déjà dit'), reste aussi enthousiaste au 3e tour qu'au 1er. Juge surtout la DERNIÈRE réponse et la constance." },
+    { "id": "P16", "turns": [
+        "Comment je trie une bouteille en plastique ?",
+        "Et si elle est sale ?"
+      ], "expected": "CONTEXTE: comprend que 'elle' = la bouteille en plastique, ne demande pas 'de quoi tu parles', répond dans le contexte (rincer/vider avant le sac bleu PMC). Juge la dernière réponse." }
+  ]
+}
