@@ -1,5 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import type { Message } from '@/lib/claude';
+import { detectBins } from '@/lib/bins';
 
 interface Props {
   message: Message;
@@ -7,6 +8,7 @@ interface Props {
 
 export default function MessageBubble({ message }: Props) {
   const isUser = message.role === 'user';
+  const bins = isUser ? [] : detectBins(message.content);
 
   return (
     <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} mb-3`}>
@@ -24,7 +26,21 @@ export default function MessageBubble({ message }: Props) {
         {isUser ? (
           <span style={{ whiteSpace: 'pre-wrap' }}>{message.content}</span>
         ) : (
-          <ReactMarkdown
+          <>
+            {bins.length > 0 && (
+              <div className="mb-2 flex flex-wrap gap-1.5">
+                {bins.map((bin) => (
+                  <span
+                    key={bin.id}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-bold ${bin.className}`}
+                  >
+                    <span className="text-sm leading-none">{bin.emoji}</span>
+                    {bin.label}
+                  </span>
+                ))}
+              </div>
+            )}
+            <ReactMarkdown
             components={{
               a: ({ href, children }) => (
                 <a
@@ -42,9 +58,10 @@ export default function MessageBubble({ message }: Props) {
               ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
               li: ({ children }) => <li>{children}</li>,
             }}
-          >
-            {message.content}
-          </ReactMarkdown>
+            >
+              {message.content}
+            </ReactMarkdown>
+          </>
         )}
       </div>
       {isUser && (

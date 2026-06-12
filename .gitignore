@@ -42,7 +42,5 @@ next-env.d.ts
 
 # App specific
 .env.local
-/data/learning.db
-/data/learning.db-shm
-/data/learning.db-wal
+/data/learning.db*
 /tmp/
