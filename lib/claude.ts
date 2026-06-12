@@ -130,16 +130,20 @@ Réponds UNIQUEMENT avec le JSON, sans texte avant ou après.`,
     ],
   });
 
-  const text = response.content[0].type === 'text' ? response.content[0].text : '{}';
+  const raw = response.content[0].type === 'text' ? response.content[0].text : '{}';
+
+  // Claude sometimes wraps JSON in markdown fences (```json ... ```) — strip them
+  const text = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
 
   try {
-    const parsed = JSON.parse(text.trim());
+    const parsed = JSON.parse(text);
     return {
       identified: parsed.identified === true,
       wasteName: parsed.wasteName ?? undefined,
       reply: parsed.reply ?? "Je n'ai pas réussi à analyser cette image. 🤔 Essaie avec une autre photo !",
     };
-  } catch {
+  } catch (err) {
+    console.error('[visionAnalysis] JSON parse failed. Raw response:', raw, err);
     return {
       identified: false,
       reply: "Je n'ai pas réussi à analyser cette image. 🤔 Essaie avec une autre photo !",
