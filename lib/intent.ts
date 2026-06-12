@@ -22,9 +22,9 @@ Intentions possibles :
 const GAME_INSTRUCTIONS = `Un enfant est EN TRAIN DE JOUER à un jeu de tri (une question vient de lui être posée).
 Classe son message :
 - "answer_game" : il répond au défi (ex: "vrai", "faux", "le numéro 2", "la canette", "sac bleu"). Les réponses de jeu sont souvent COURTES.
-- "dont_know" : il ne sait pas, hésite ou demande la réponse (ex: "je sais pas", "chais pas", "aucune idée", "j'hésite", "c'est quoi la réponse ?", "dis-moi", "?", "hmm", "trop dur").
+- "dont_know" : il ne sait pas, hésite ou demande la réponse à CETTE question (ex: "je sais pas", "chais pas", "aucune idée", "j'hésite", "c'est quoi la réponse ?", "dis-moi", "?", "hmm").
 - "new_game" : il veut une AUTRE question ou changer de TYPE de jeu (Vrai/Faux ↔ Intrus), mais au MÊME niveau (ex: "on change de jeu", "autre question", "passe", "je veux un autre défi", "suivant").
-- "change_level" : il veut changer de NIVEAU de difficulté (ex: "passe en débutant", "niveau facile", "je veux le mode expert", "mets plus difficile", "change de niveau", "c'est trop facile").
+- "change_level" : il veut changer de NIVEAU de difficulté, OU il se plaint que c'est trop dur/trop facile (ex: "passe en débutant", "niveau facile", "je veux le mode expert", "mets plus difficile", "change de niveau", "c'est trop facile", "c'est trop dur", "c'est trop difficile", "c'est trop compliqué").
 - "ask_question" : il ne répond PAS au défi, mais veut savoir où trier un AUTRE objet ou pose une question sur le tri (ex: "attends, c'est quoi le PMC ?", "et une bouteille en verre, ça va où ?", "comment je trie une pizza ?", ou il cite un ou des objets à trier qui ne sont pas une réponse valide au défi).
 - "quit_game" : il veut ARRÊTER complètement de jouer (ex: "stop", "j'arrête", "on arrête de jouer", "j'en ai marre", "je veux juste discuter").`;
 

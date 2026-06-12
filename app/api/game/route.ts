@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
     // L'enfant ne sait pas → on explique gentiment et on enchaîne (pas de pénalité)
     if (intent === 'dont_know') {
-      const next = newQuestion('random', difficulty);
+      const next = newQuestion(question.format, difficulty);
       return NextResponse.json({
         mode: 'game',
         question: next,
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
     if (intent === 'change_level') {
       const newDifficulty = parseLevelChange(sanitized, difficulty);
       const niveau = newDifficulty === 'expert' ? '🔴 Expert' : '🟢 Débutant';
-      const next = newQuestion('random', newDifficulty);
+      const next = newQuestion(question.format, newDifficulty);
       return NextResponse.json({
         mode: 'game',
         difficulty: newDifficulty,
@@ -145,7 +145,7 @@ export async function POST(request: Request) {
         ? checkTrueFalse(question, sanitized)
         : checkIntruder(question, sanitized);
 
-    const next = newQuestion('random', difficulty);
+    const next = newQuestion(question.format, difficulty);
     return NextResponse.json({
       mode: 'game',
       correct: result.correct,

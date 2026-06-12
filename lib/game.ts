@@ -186,13 +186,27 @@ export function parseDifficulty(message: string): Difficulty {
 }
 
 /**
- * Détermine le nouveau niveau quand l'enfant demande à changer de niveau :
- * niveau explicite s'il est nommé, sinon on bascule vers l'autre.
+ * Détermine le nouveau niveau quand l'enfant demande à changer de niveau.
+ * Une PLAINTE est relative au niveau actuel : "trop dur" → plus facile,
+ * "trop facile" → plus dur. Un niveau NOMMÉ explicitement prime. Sinon bascule.
  */
 export function parseLevelChange(message: string, current?: Difficulty): Difficulty {
   const m = normalize(message);
-  if (/\b(expert|dur|difficile|fort|avance|pro|costaud)\b/.test(m)) return 'expert';
+
+  // Plaintes comparatives (« c'est trop dur » → plus facile ; « trop facile » → plus dur)
+  const tooHard = /\b(trop (dur|difficile|complique|chaud)|plus facile|moins dur|moins difficile)\b/.test(m);
+  const tooEasy = /\b(trop (facile|simple)|plus dur|plus difficile|plus complique|moins facile)\b/.test(m);
+  if (tooHard && !tooEasy) return 'debutant';
+  if (tooEasy && !tooHard) return 'expert';
+
+  // Niveau nommé explicitement
+  if (/\bexpert\b/.test(m) || /\b(niveau|mode)\s+(difficile|dur)\b/.test(m)) return 'expert';
   if (/\b(debutant|debut|facile|simple|easy)\b/.test(m)) return 'debutant';
+
+  // « dur »/« difficile » seuls = plainte → plus facile
+  if (/\b(dur|difficile|complique)\b/.test(m)) return 'debutant';
+
+  // Sinon on bascule vers l'autre niveau
   return current === 'expert' ? 'debutant' : 'expert';
 }
 
