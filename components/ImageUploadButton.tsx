@@ -6,7 +6,6 @@ interface Props {
   disabled?: boolean;
 }
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 const MAX_SIZE = 5 * 1024 * 1024;
 
 export default function ImageUploadButton({ onImageSelected, onError, disabled }: Props) {
@@ -14,13 +13,6 @@ export default function ImageUploadButton({ onImageSelected, onError, disabled }
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Surface validation problems in-character (in the chat) instead of a jarring
-    // browser alert() that breaks the illusion of talking to Trico.
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      onError?.("Hmm, je ne peux lire que les images (JPEG, PNG, GIF ou WebP) ! 🖼️ Réessaie avec une photo.");
-      e.target.value = '';
-      return;
-    }
     if (file.size > MAX_SIZE) {
       onError?.("Cette image est un peu trop lourde pour moi ! 😅 Essaie une photo de moins de 5 Mo.");
       e.target.value = '';
@@ -41,7 +33,7 @@ export default function ImageUploadButton({ onImageSelected, onError, disabled }
     >
       <input
         type="file"
-        accept="image/jpeg,image/png,image/gif,image/webp"
+        accept="image/*"
         className="sr-only"
         onChange={handleChange}
         disabled={disabled}

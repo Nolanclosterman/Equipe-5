@@ -53,7 +53,7 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onI
         <ImageUploadButton onImageSelected={onSendImage} onError={onImageError} disabled={disabled} />
         <label
           aria-label="Prendre une photo"
-          className={`sm:hidden flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${
+          className={`sm:hidden relative overflow-hidden flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors ${
             disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-gray-200 cursor-pointer'
           }`}
         >
@@ -61,7 +61,7 @@ export default function InputBar({ onSendMessage, onSendImage, onVoiceError, onI
             type="file"
             accept="image/*"
             capture="environment"
-            className="sr-only"
+            className="absolute inset-0 opacity-0 cursor-pointer"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) { onSendImage(file); e.target.value = ''; }
