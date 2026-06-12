@@ -56,17 +56,53 @@ export default function Home() {
           body: JSON.stringify({ message: text, history: messages }),
         });
 
-        const data = await res.json();
+        const contentType = res.headers.get('Content-Type') ?? '';
 
-        if (!res.ok) {
-          setError(data.error ?? 'Erreur inconnue.');
-        } else {
-          appendMessage({
-            role: 'assistant',
-            content: data.reply,
-            timestamp: Date.now(),
-          });
+        // Error and sanitize-reject responses still come back as JSON with a
+        // status code; only the successful reply is streamed as text.
+        if (!res.ok || !contentType.includes('text/plain') || !res.body) {
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            setError(data.error ?? 'Erreur inconnue.');
+          } else {
+            appendMessage({
+              role: 'assistant',
+              content: data.reply ?? '',
+              timestamp: Date.now(),
+            });
+          }
+          return;
         }
+
+        // Streaming path: grow a single assistant bubble as deltas arrive.
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        const ts = Date.now();
+        let acc = '';
+        let started = false;
+
+        const applyChunk = () => {
+          if (!started) {
+            started = true;
+            setIsLoading(false); // replace the typing dots with the live bubble
+            appendMessage({ role: 'assistant', content: acc, timestamp: ts });
+          } else {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.role === 'assistant' && m.timestamp === ts ? { ...m, content: acc } : m
+              )
+            );
+          }
+        };
+
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          acc += decoder.decode(value, { stream: true });
+          applyChunk();
+        }
+        acc += decoder.decode(); // flush any trailing multi-byte char (accents/emojis)
+        applyChunk();
       } catch {
         setError('Pas de connexion. Vérifie ton internet et réessaie ! 🌐');
       } finally {
