@@ -76,21 +76,20 @@ export default function PushToTalkButton({ onTranscript, disabled }: Props) {
     setIsListening(false);
   }, []);
 
-  if (!isSupported) return null;
-
   return (
     <button
       type="button"
-      onPointerDown={startListening}
-      onPointerUp={stopListening}
-      onPointerLeave={stopListening}
-      disabled={disabled}
+      onPointerDown={isSupported ? startListening : undefined}
+      onPointerUp={isSupported ? stopListening : undefined}
+      onPointerLeave={isSupported ? stopListening : undefined}
+      disabled={disabled || !isSupported}
       aria-label={isListening ? 'Arrêter la dictée' : 'Parler'}
+      title={!isSupported ? 'Ton navigateur ne supporte pas la reconnaissance vocale' : undefined}
       className={`flex h-11 w-11 flex-none items-center justify-center rounded-full transition-colors ${
         isListening
           ? 'bg-red-500 text-white animate-pulse'
           : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-      } disabled:opacity-40`}
+      } disabled:opacity-40 disabled:cursor-not-allowed`}
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
         <rect x="9" y="2" width="6" height="11" rx="3"/>
