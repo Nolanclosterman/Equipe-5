@@ -19,7 +19,13 @@ export default function ChatWindow({ messages, isLoading, onPickSuggestion }: Pr
   }, [messages, isLoading]);
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-2 bg-gray-50">
+    <div
+      className="h-full overflow-y-auto px-4"
+      style={{
+        paddingTop: 'calc(env(safe-area-inset-top) + 4.25rem)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 5.5rem)',
+      }}
+    >
       {messages.length === 0 ? (
         <WelcomeMessage onSelect={onPickSuggestion} />
       ) : (
@@ -29,8 +35,12 @@ export default function ChatWindow({ messages, isLoading, onPickSuggestion }: Pr
           ))}
           {isLoading && (
             <div className="flex justify-start mb-3">
-              <div className="mr-2 mt-1 flex-none text-2xl leading-none select-none">♻️</div>
-              <div className="rounded-2xl rounded-bl-sm bg-white border border-gray-100 px-4 py-3 shadow-sm">
+              <img
+                src="/trico-avatar.png"
+                alt="Trico"
+                className="mr-2 mt-1 h-8 w-8 flex-none rounded-full object-cover select-none"
+              />
+              <div className="rounded-2xl rounded-bl-sm bg-gray-100 px-4 py-3">
                 <div className="flex gap-1 items-center h-5">
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-bounce [animation-delay:0ms]" />
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-bounce [animation-delay:150ms]" />

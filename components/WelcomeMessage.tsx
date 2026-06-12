@@ -15,7 +15,11 @@ const SUGGESTIONS = [
 export default function WelcomeMessage({ onSelect }: Props) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-8 px-4 text-center">
-      <div className="text-6xl">♻️</div>
+      <img
+        src="/trico-avatar.png"
+        alt="Trico"
+        className="h-24 w-24 rounded-full object-cover shadow-sm select-none"
+      />
       <h2 className="text-2xl font-bold text-green-700">Salut ! Je suis Trico 👋</h2>
       <p className="max-w-sm text-base text-gray-600 leading-relaxed">
         Je suis ton expert du tri des déchets en Wallonie et à Bruxelles ! Pose-moi

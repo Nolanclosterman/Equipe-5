@@ -13,13 +13,17 @@ export default function MessageBubble({ message }: Props) {
   return (
     <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} mb-3`}>
       {!isUser && (
-        <div className="mr-2 mt-1 flex-none text-2xl leading-none select-none">♻️</div>
+        <img
+          src="/trico-avatar.png"
+          alt="Trico"
+          className="mr-2 mt-1 h-8 w-8 flex-none rounded-full object-cover select-none"
+        />
       )}
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
           isUser
             ? 'rounded-br-sm bg-green-600 text-white'
-            : 'rounded-bl-sm bg-white text-gray-800 border border-gray-100'
+            : 'rounded-bl-sm bg-gray-100 text-gray-800'
         }`}
         style={{ wordBreak: 'break-word' }}
       >

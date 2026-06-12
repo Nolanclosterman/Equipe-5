@@ -27,8 +27,8 @@ export default function ImageUploadButton({ onImageSelected, onError, disabled }
     <label
       aria-label="Envoyer une photo"
       title="Envoyer une photo"
-      className={`flex h-11 w-11 flex-none items-center justify-center rounded-full bg-blue-50 text-blue-600 transition-colors ${
-        disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-blue-100 cursor-pointer'
+      className={`glass-control glass-press flex h-11 w-11 flex-none items-center justify-center rounded-full text-blue-600 ${
+        disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'cursor-pointer'
       }`}
     >
       <input

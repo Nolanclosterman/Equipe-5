@@ -118,10 +118,10 @@ export default function PushToTalkButton({ onTranscript, onError, disabled }: Pr
       disabled={disabled || !isSupported}
       aria-label={isListening ? 'Arrêter la dictée' : 'Dicter un message'}
       title={!isSupported ? 'Ton navigateur ne supporte pas la reconnaissance vocale' : isListening ? 'Clique pour arrêter' : 'Clique pour dicter'}
-      className={`flex h-11 w-11 flex-none items-center justify-center rounded-full transition-colors ${
+      className={`glass-press flex h-11 w-11 flex-none items-center justify-center rounded-full transition-colors ${
         isListening
           ? 'bg-red-500 text-white animate-pulse'
-          : 'bg-green-50 text-green-600 hover:bg-green-100'
+          : 'glass-control text-green-600'
       } disabled:opacity-40 disabled:cursor-not-allowed`}
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
