@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Message } from '@/lib/claude';
-import type { GameQuestion } from '@/lib/game';
+import type { GameQuestion, Difficulty } from '@/lib/game';
 import ChatWindow from '@/components/ChatWindow';
 import InputBar from '@/components/InputBar';
 import MischiefGame from '@/components/MischiefGame';
@@ -45,6 +45,8 @@ export default function Home() {
   const [mode, setMode] = useState<Mode>('chat');
   const [question, setQuestion] = useState<GameQuestion | null>(null);
   const [score, setScore] = useState<Score>({ correct: 0, total: 0 });
+  const [difficulty, setDifficulty] = useState<Difficulty | null>(null);
+  const [awaitingDifficulty, setAwaitingDifficulty] = useState(false);
 
   // Hydrate from localStorage — must be in useEffect to avoid SSR mismatch
   useEffect(() => {
@@ -59,10 +61,18 @@ export default function Home() {
 
         const gameStored = localStorage.getItem(GAME_KEY);
         if (gameStored) {
-            const g = JSON.parse(gameStored) as { mode: Mode; question: GameQuestion | null; score: Score };
-            if (g.mode) setMode(g.mode);
-            if (g.question) setQuestion(g.question);
-            if (g.score) setScore(g.score);
+          const g = JSON.parse(gameStored) as {
+            mode: Mode;
+            question: GameQuestion | null;
+            score: Score;
+            difficulty?: Difficulty | null;
+            awaitingDifficulty?: boolean;
+          };
+          if (g.mode) setMode(g.mode);
+          if (g.question) setQuestion(g.question);
+          if (g.score) setScore(g.score);
+          if (g.difficulty) setDifficulty(g.difficulty);
+          if (g.awaitingDifficulty) setAwaitingDifficulty(g.awaitingDifficulty);
         }
     } catch {
       // Ignore corrupt storage
@@ -83,11 +93,14 @@ export default function Home() {
   // Persist game state
   useEffect(() => {
     try {
-      localStorage.setItem(GAME_KEY, JSON.stringify({ mode, question, score }));
+      localStorage.setItem(
+        GAME_KEY,
+        JSON.stringify({ mode, question, score, difficulty, awaitingDifficulty })
+      );
     } catch {
       // ignore
     }
-  }, [mode, question, score]);
+  }, [mode, question, score, difficulty, awaitingDifficulty]);
 
   const appendMessage = (msg: Message) => {
     setMessages((prev) => [...prev, msg]);
@@ -142,12 +155,35 @@ export default function Home() {
       setIsLoading(true);
 
       try {
+        // ── Choix du niveau : on démarre la partie avec la difficulté ──
+        if (mode === 'game' && awaitingDifficulty) {
+          const picked: Difficulty | undefined =
+            text === 'expert' || text === 'debutant' ? text : undefined;
+          const res = await fetch('/api/game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'start', format: 'random', message: text, difficulty: picked }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            setError(data.error ?? 'Erreur inconnue.');
+          } else {
+            appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
+            setDifficulty(data.difficulty ?? 'debutant');
+            setAwaitingDifficulty(false);
+            setQuestion(data.question ?? null);
+            setMode('game');
+          }
+          return;
+        }
+
         // ── En pleine partie : on envoie la réponse au moteur de jeu ──
         if (mode === 'game' && question) {
           const res = await fetch('/api/game', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'answer', question, message: text }),
+            body: JSON.stringify({ action: 'answer', question, message: text, difficulty }),
           });
           const data = await res.json();
 
@@ -158,8 +194,10 @@ export default function Home() {
             if (typeof data.correct === 'boolean') {
               setScore((s) => ({ correct: s.correct + (data.correct ? 1 : 0), total: s.total + 1 }));
             }
-            setMode(data.mode === 'chat' ? 'chat' : 'game');
+            const nextMode = data.mode === 'chat' ? 'chat' : 'game';
+            setMode(nextMode);
             setQuestion(data.question ?? null);
+            if (nextMode === 'chat') setDifficulty(null);
           }
           return;
         }
@@ -179,14 +217,14 @@ export default function Home() {
           const data = await res.json().catch(() => ({}));
           if (!res.ok) {
             appendBotBubble(data.error ?? "Oups, petit souci ! 😅 Réessaie dans un instant.");
-          } else if (data.startGame) {
-              // L'enfant veut jouer → /api/chat a déjà généré la première question
-              appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
-              setMode('game');
-              setQuestion(data.question ?? null);
-              setScore({ correct: 0, total: 0 });
-          } else {
-              appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
+          } else if (data.chooseDifficulty) {
+            // L'enfant veut jouer → on lui demande d'abord son niveau
+            appendMessage({ role: 'assistant', content: data.reply, timestamp: Date.now() });
+            setMode('game');
+            setAwaitingDifficulty(true);
+            setQuestion(null);
+            setDifficulty(null);
+            setScore({ correct: 0, total: 0 });
           } else {
             appendMessage({
               role: 'assistant',
@@ -238,7 +276,7 @@ export default function Home() {
         setIsLoading(false);
       }
     },
-    [isLoading, messages, appendBotBubble, mode, question]
+    [isLoading, messages, appendBotBubble, mode, question, difficulty, awaitingDifficulty]
   );
 
   const sendImage = useCallback(
@@ -283,6 +321,8 @@ export default function Home() {
     setMode('chat');
     setQuestion(null);
     setScore({ correct: 0, total: 0 });
+    setDifficulty(null);
+    setAwaitingDifficulty(false);
     try {
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(GAME_KEY);
@@ -291,16 +331,23 @@ export default function Home() {
     }
   };
 
-  // Boutons de réponse rapide pendant une partie
-  const quickReplies =
-    mode === 'game' && question
-      ? question.format === 'truefalse'
-        ? [
-            { label: 'Vrai ✅', value: 'Vrai' },
-            { label: 'Faux ❌', value: 'Faux' },
-          ]
-        : question.items.map((_, i) => ({ label: `${i + 1}`, value: `${i + 1}` }))
-      : [];
+  // Boutons de réponse rapide : choix du niveau, puis selon le format de question
+  const quickReplies = (() => {
+    if (mode !== 'game') return [];
+    if (awaitingDifficulty) {
+      return [
+        { label: '🟢 Débutant', value: 'debutant' },
+        { label: '🔴 Expert', value: 'expert' },
+      ];
+    }
+    if (!question) return [];
+    return question.format === 'truefalse'
+      ? [
+          { label: 'Vrai ✅', value: 'Vrai' },
+          { label: 'Faux ❌', value: 'Faux' },
+        ]
+      : question.items.map((_, i) => ({ label: `${i + 1}`, value: `${i + 1}` }));
+  })();
 
   return (
     <div className="flex h-[100dvh] flex-col">
@@ -324,11 +371,13 @@ export default function Home() {
                 🌟 {discovered}
               </span>
             )}
-              {mode === 'game' && (
-                  <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">
-                🎮 Jeu · {score.correct}/{score.total}
+            {mode === 'game' && (
+                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">
+                {awaitingDifficulty
+                    ? '🎮 Choix du niveau'
+                    : `🎮 ${difficulty === 'expert' ? '🔴 Expert' : '🟢 Débutant'} · ${score.correct}/${score.total}`}
               </span>
-              )}
+            )}
             {messages.length > 0 && (
               <button
                 onClick={clearHistory}

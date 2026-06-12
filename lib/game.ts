@@ -87,11 +87,11 @@ export interface AnswerResult {
   reply: string;
 }
 
-/** Génère une question (format imposé ou aléatoire en alternant les deux). */
-export function newQuestion(format?: string): GameQuestion {
-  if (format === 'truefalse') return generateTrueFalse();
-  if (format === 'intruder') return generateIntruder();
-  return Math.random() < 0.5 ? generateTrueFalse() : generateIntruder();
+/** Génère une question (format imposé ou aléatoire en alternant les deux), filtrée par niveau. */
+export function newQuestion(format?: string, difficulty?: Difficulty): GameQuestion {
+  if (format === 'truefalse') return generateTrueFalse(difficulty);
+  if (format === 'intruder') return generateIntruder(difficulty);
+  return Math.random() < 0.5 ? generateTrueFalse(difficulty) : generateIntruder(difficulty);
 }
 
 /** Texte à afficher pour une question (l'énoncé selon le format). */
@@ -140,17 +140,37 @@ function funFact(record: WasteRecord): string {
   return '';
 }
 
-// Déchets exploitables : ceux dont on connaît au moins une poubelle.
-function playablePool(): WasteRecord[] {
-  return getAllWasteRecords().filter((r) => getBins(r).length > 0);
+export type Difficulty = 'debutant' | 'expert';
+
+// Poubelles « maison » → déchets courants (débutant). Recyparc / point spécial → experts.
+const HOME_BINS: BinKey[] = ['pmc', 'papier', 'organique', 'residuel'];
+
+/** Niveau d'un déchet : courant = débutant ; spécial (recyparc/point spécial) = expert. */
+export function difficultyOf(record: WasteRecord): Difficulty {
+  const primary = getBins(record)[0];
+  return HOME_BINS.includes(primary) ? 'debutant' : 'expert';
+}
+
+/** Interprète le choix de niveau d'un enfant (bouton ou texte libre). Défaut : débutant. */
+export function parseDifficulty(message: string): Difficulty {
+  const m = normalize(message);
+  if (/\b(expert|dur|difficile|fort|special|avance|pro|costaud)\b/.test(m)) return 'expert';
+  return 'debutant';
+}
+
+// Déchets exploitables : ceux dont on connaît au moins une poubelle, filtrés par niveau.
+function playablePool(difficulty?: Difficulty): WasteRecord[] {
+  return getAllWasteRecords().filter(
+    (r) => getBins(r).length > 0 && (!difficulty || difficultyOf(r) === difficulty)
+  );
 }
 
 // ──────────────────────────────────────────────────────────────────────────
 // Format 1 — Vrai / Faux
 // ──────────────────────────────────────────────────────────────────────────
 
-export function generateTrueFalse(): TrueFalseQuestion {
-  const pool = playablePool();
+export function generateTrueFalse(difficulty?: Difficulty): TrueFalseQuestion {
+  const pool = playablePool(difficulty);
   const record = pick(pool);
   const accepted = getBins(record);
 
@@ -177,8 +197,8 @@ export function generateTrueFalse(): TrueFalseQuestion {
 // Format 2 — L'intrus
 // ──────────────────────────────────────────────────────────────────────────
 
-export function generateIntruder(): IntruderQuestion {
-  const pool = playablePool();
+export function generateIntruder(difficulty?: Difficulty): IntruderQuestion {
+  const pool = playablePool(difficulty);
 
   // Regroupe par poubelle principale
   const byBin = new Map<BinKey, WasteRecord[]>();

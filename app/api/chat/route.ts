@@ -4,7 +4,6 @@ import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 import { searchWaste } from '@/lib/search';
 import { streamChatCompletion, chatCompletion } from '@/lib/claude';
 import { classifyChatIntent } from '@/lib/intent';
-import { newQuestion, questionText } from '@/lib/game';
 import { logUnknownTerm, logQuestionPattern } from '@/lib/db';
 import type { Message } from '@/lib/claude';
 
@@ -86,14 +85,10 @@ export async function POST(request: Request) {
   try {
     const intent = await classifyChatIntent(sanitized);
     if (intent === 'start_game') {
-      const question = newQuestion('random');
       return NextResponse.json({
         startGame: true,
-        mode: 'game',
-        question,
-        reply: `🎮 C'est parti pour un défi tri ! Réponds quand tu es prêt, et dis "stop" quand tu veux arrêter.\n\n${questionText(
-          question
-        )}`,
+        chooseDifficulty: true,
+        reply: `🎮 Oh oui, on joue ! Tu veux quel niveau ?\n\n🟢 **Débutant** — les déchets de tous les jours\n🔴 **Expert** — les déchets spéciaux (recyparc, piles, huiles…)`,
       });
     }
   } catch (error) {

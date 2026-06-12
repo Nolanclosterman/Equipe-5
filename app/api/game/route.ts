@@ -10,8 +10,14 @@ import {
   checkTrueFalse,
   checkIntruder,
   explainAnswer,
+  parseDifficulty,
   type GameQuestion,
+  type Difficulty,
 } from '@/lib/game';
+
+function readDifficulty(value: unknown): Difficulty | undefined {
+  return value === 'expert' || value === 'debutant' ? value : undefined;
+}
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
@@ -23,7 +29,13 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { action?: unknown; format?: unknown; question?: unknown; message?: unknown };
+  let body: {
+    action?: unknown;
+    format?: unknown;
+    question?: unknown;
+    message?: unknown;
+    difficulty?: unknown;
+  };
   try {
     body = await request.json();
   } catch {
@@ -33,11 +45,16 @@ export async function POST(request: Request) {
   // ── Démarrer une partie ────────────────────────────────────────────────
   if (body.action === 'start') {
     const format = typeof body.format === 'string' ? body.format : undefined;
-    const question = newQuestion(format);
+    const difficulty: Difficulty =
+      readDifficulty(body.difficulty) ??
+      parseDifficulty(typeof body.message === 'string' ? body.message : '');
+    const question = newQuestion(format, difficulty);
+    const niveau = difficulty === 'expert' ? '🔴 Niveau Expert' : '🟢 Niveau Débutant';
     return NextResponse.json({
       mode: 'game',
+      difficulty,
       question,
-      reply: `🎮 C'est parti pour un défi tri ! Réponds quand tu es prêt, et dis "stop" quand tu veux arrêter.\n\n${questionText(
+      reply: `${niveau}, c'est parti ! 🎮 Réponds quand tu es prêt, et dis "stop" pour arrêter.\n\n${questionText(
         question
       )}`,
     });
@@ -56,11 +73,12 @@ export async function POST(request: Request) {
       );
     }
 
+    const difficulty = readDifficulty(body.difficulty);
     const intent = await classifyGameIntent(sanitized);
 
     // L'enfant ne sait pas → on explique gentiment et on enchaîne (pas de pénalité)
     if (intent === 'dont_know') {
-      const next = newQuestion('random');
+      const next = newQuestion('random', difficulty);
       return NextResponse.json({
         mode: 'game',
         question: next,
@@ -70,7 +88,7 @@ export async function POST(request: Request) {
 
     // L'enfant veut un autre défi (sans quitter)
     if (intent === 'new_game') {
-      const next = newQuestion('random');
+      const next = newQuestion('random', difficulty);
       return NextResponse.json({
         mode: 'game',
         question: next,
@@ -104,7 +122,7 @@ export async function POST(request: Request) {
         ? checkTrueFalse(question, sanitized)
         : checkIntruder(question, sanitized);
 
-    const next = newQuestion('random');
+    const next = newQuestion('random', difficulty);
     return NextResponse.json({
       mode: 'game',
       correct: result.correct,
